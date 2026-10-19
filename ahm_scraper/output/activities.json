@@ -1,0 +1,15 @@
+{
+  "activities": [
+    {
+      "id": "act-6bf201b7",
+      "target_type": "network",
+      "target_key": "net-palladium",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "asking for a call on wed",
+      "next_action": "",
+      "next_action_due": "",
+      "date": "2026-10-19T21:01:37"
+    }
+  ]
+}

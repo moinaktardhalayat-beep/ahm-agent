@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Network — AHM Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; margin: 0; color: #1d1d1f; font-size: 14px; }
+    .topnav { background: #fff; padding: 0 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 4px; }
+    .topnav a { padding: 14px 18px; color: #6e6e73; text-decoration: none; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; }
+    .topnav a:hover { color: #1d1d1f; }
+    .topnav a.active { color: #0071e3; border-bottom-color: #0071e3; }
+    header { background: #fff; border-bottom: 1px solid #e5e5e7; padding: 20px 32px; position: sticky; top: 0; z-index: 10; }
+    h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 600; }
+    .stats { display: flex; gap: 24px; margin-top: 10px; font-size: 13px; color: #6e6e73; flex-wrap: wrap; }
+    .stats b { color: #1d1d1f; font-weight: 600; }
+    .toolbar { background: #fff; padding: 12px 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; position: sticky; top: 100px; z-index: 9; }
+    select, input[type="text"] { padding: 7px 10px; border: 1px solid #d2d2d7; border-radius: 6px; background: #fff; font-size: 13px; min-width: 140px; font-family: inherit; }
+    input[type="text"] { min-width: 200px; }
+    input[type="date"] { padding: 7px 10px; border: 1px solid #d2d2d7; border-radius: 6px; background: #fff; font-size: 13px; font-family: inherit; }
+    button { padding: 7px 14px; border: none; border-radius: 6px; background: #0071e3; color: #fff; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
+    button:hover { background: #0063c8; }
+    button.secondary { background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7; }
+    button.secondary:hover { background: #f5f5f7; }
+    button.danger { background: #d70015; }
+    button.danger:hover { background: #b30011; }
+    main { padding: 20px 32px 60px 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #fff; border: 1px solid #e5e5e7; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .card-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .card-header:hover { background: #fafafa; }
+    .card-title { flex: 1; font-weight: 500; font-size: 15px; line-height: 1.4; }
+    .card-title small { display: block; color: #86868b; font-weight: 400; font-size: 12px; margin-top: 2px; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge.type { background: #e0e7ff; color: #3730a3; }
+    .badge.status-NEW { background: #fef3c7; color: #92400e; }
+    .badge.status-CONTACTED, .badge.status-IN_CONVERSATION, .badge.status-REFERRED, .badge.status-ACTIVE { background: #d1f4d8; color: #166534; }
+    .badge.status-DECLINED, .badge.status-DO_NOT_CONTACT, .badge.status-DORMANT { background: #f3f4f6; color: #6b7280; }
+    .badge.relationship-warm, .badge.relationship-referred { background: #fde68a; color: #78350f; }
+    .badge.lead-link { background: #dbeafe; color: #1e40af; }
+    .chevron { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.2s; color: #86868b; }
+    .card.open .chevron { transform: rotate(90deg); }
+    .card-body { display: none; border-top: 1px solid #e5e5e7; }
+    .card.open .card-body { display: block; }
+    .body-inner { padding: 20px 24px; display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+    @media (max-width: 1000px) { .body-inner { grid-template-columns: 1fr; } }
+    .field-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .field-table td { padding: 6px 0; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+    .field-table td:first-child { width: 140px; color: #6e6e73; font-weight: 500; padding-right: 16px; }
+    .field-table td.empty { color: #c7c7cc; font-style: italic; }
+    a { color: #0071e3; text-decoration: none; word-break: break-all; }
+    a:hover { text-decoration: underline; }
+    .right-col h3 { margin: 0 0 10px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6e6e73; letter-spacing: 0.5px; }
+    .right-col h3:not(:first-child) { margin-top: 20px; }
+    .status-form select { width: 100%; margin-bottom: 8px; }
+    .status-form input[type="text"], .status-form input[type="date"] { width: 100%; margin-bottom: 8px; }
+    textarea { width: 100%; min-height: 60px; padding: 8px; border: 1px solid #d2d2d7; border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical; margin-bottom: 8px; }
+    textarea:focus, input:focus, select:focus { outline: none; border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
+    .comment { background: #f5f5f7; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+    .comment .meta { font-size: 11px; color: #86868b; margin-bottom: 4px; }
+    .activity { background: #f0f9ff; padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; border-left: 3px solid #0071e3; }
+    .activity .meta { font-size: 11px; color: #0369a1; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; font-weight: 600; }
+    .empty-note { font-size: 13px; color: #86868b; padding: 8px 0; font-style: italic; }
+    .list-scroll { max-height: 250px; overflow-y: auto; margin-bottom: 10px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #86868b; background: #fff; border-radius: 10px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1d1d1f; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal.open { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+    .modal-content { position: relative; background: #fff; border-radius: 12px; padding: 24px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-content h2 { margin: 0 0 16px 0; font-size: 18px; }
+    .modal-content label { display: block; font-size: 12px; color: #6e6e73; margin: 10px 0 4px 0; font-weight: 500; }
+    .modal-content input, .modal-content select, .modal-content textarea { width: 100%; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a href="/">Projects</a>
+    <a href="/network" class="active">Network</a>
+    <a href="/weekly">Weekly Target</a>
+  </nav>
+
+  <header>
+    <h1>Network</h1>
+    <div class="stats">
+      <span><b>{{ total }}</b> contacts</span>
+      <span><b>{{ warm_count }}</b> warm</span>
+      <span><b>{{ contacted_count }}</b> in conversation</span>
+      <span><b>{{ referred_count }}</b> referred</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <select id="filter-type">
+      <option value="">All types</option>
+      {% for t in network_types %}<option value="{{ t }}">{{ t.replace('_',' ').title() }}</option>{% endfor %}
+    </select>
+    <select id="filter-status">
+      <option value="">All statuses</option>
+      {% for s in network_statuses %}<option>{{ s }}</option>{% endfor %}
+    </select>
+    <select id="filter-relationship">
+      <option value="">All relationships</option>
+      <option>cold</option><option>warm</option><option>referred</option>
+    </select>
+    <input type="text" id="search" placeholder="Search name, firm, notes...">
+    <button onclick="openAddModal()">+ Add contact</button>
+    <button class="secondary" onclick="location.reload()">Refresh</button>
+  </div>
+
+  <main>
+    {% if contacts %}
+      {% for c in contacts %}
+      <div class="card" data-id="{{ c.id }}" data-type="{{ c.type }}" data-status="{{ c.status }}" data-relationship="{{ c.relationship }}">
+        <div class="card-header" onclick="toggleCard(this)">
+          <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path d="M7 5l6 5-6 5V5z"/></svg>
+          <div class="card-title">
+            {{ c.name }}
+            {% if c.firm and c.firm != c.name %}<small>{{ c.firm }}{% if c.role_in_firm %} — {{ c.role_in_firm }}{% endif %}</small>{% elif c.role_in_firm %}<small>{{ c.role_in_firm }}</small>{% endif %}
+          </div>
+          <span class="badge type">{{ c.type.replace('_',' ') }}</span>
+          <span class="badge status-{{ c.status }}">{{ c.status.replace('_',' ') }}</span>
+          {% if c.relationship and c.relationship != 'cold' %}<span class="badge relationship-{{ c.relationship }}">{{ c.relationship }}</span>{% endif %}
+          {% if c.linked_lead_keys %}<span class="badge lead-link">{{ c.linked_lead_keys|length }} lead{% if c.linked_lead_keys|length != 1 %}s{% endif %}</span>{% endif %}
+        </div>
+        <div class="card-body">
+          <div class="body-inner">
+            <div>
+              <table class="field-table">
+                <tr><td>Type</td><td>{{ c.type.replace('_',' ').title() }}</td></tr>
+                {% if c.firm %}<tr><td>Firm</td><td>{{ c.firm }}</td></tr>{% endif %}
+                {% if c.role_in_firm %}<tr><td>Role</td><td>{{ c.role_in_firm }}</td></tr>{% endif %}
+                <tr><td>How they help</td><td class="{{ 'empty' if not c.how_they_help }}">{{ c.how_they_help or 'not specified' }}</td></tr>
+                <tr><td>Location</td><td>{{ c.location }}</td></tr>
+                {% if c.phone %}<tr><td>Phone</td><td>{{ c.phone }}</td></tr>{% endif %}
+                {% if c.whatsapp %}<tr><td>WhatsApp</td><td>{{ c.whatsapp }}</td></tr>{% endif %}
+                {% if c.email %}<tr><td>Email</td><td>{{ c.email }}</td></tr>{% endif %}
+                {% if c.linkedin %}<tr><td>LinkedIn</td><td><a href="{{ c.linkedin }}" target="_blank">{{ c.linkedin[:60] }}...</a></td></tr>{% endif %}
+                {% if c.website %}<tr><td>Website</td><td><a href="{{ c.website }}" target="_blank">{{ c.website[:60] }}</a></td></tr>{% endif %}
+                <tr><td>Source</td><td>{{ c.source }}</td></tr>
+                <tr><td>Relationship</td><td>{{ c.relationship }}</td></tr>
+                <tr><td>Last contacted</td><td class="{{ 'empty' if not c.last_contacted }}">{{ c.last_contacted or 'never' }}</td></tr>
+                <tr><td>Next action</td><td class="{{ 'empty' if not c.next_action }}">{{ c.next_action or '—' }}</td></tr>
+                <tr><td>Due</td><td class="{{ 'empty' if not c.next_action_due }}">{{ c.next_action_due or '—' }}</td></tr>
+                {% if c.linked_lead_keys %}
+                <tr><td>Linked leads</td><td>{% for k in c.linked_lead_keys %}{{ k }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td></tr>
+                {% endif %}
+                <tr><td>Created</td><td>{{ c.created_at }}</td></tr>
+              </table>
+            </div>
+            <div class="right-col">
+              <h3>Status & next action</h3>
+              <div class="status-form">
+                <select id="status-{{ c.id }}" onchange="setStatus('{{ c.id }}', this.value)">
+                  {% for s in network_statuses %}
+                  <option {% if s == c.status %}selected{% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" id="next-action-{{ c.id }}" placeholder="Next action" value="{{ c.next_action }}">
+                <input type="date" id="next-due-{{ c.id }}" value="{{ c.next_action_due }}">
+                <button class="secondary" onclick="saveNextAction('{{ c.id }}')">Save</button>
+              </div>
+
+              <h3>Log activity</h3>
+              <div class="status-form">
+                <select id="method-{{ c.id }}">
+                  {% for m in activity_methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+                </select>
+                <select id="outcome-{{ c.id }}">
+                  {% for o in activity_outcomes %}<option value="{{ o }}">{{ o.replace('_',' ') }}</option>{% endfor %}
+                </select>
+                <textarea id="notes-{{ c.id }}" placeholder="Notes..."></textarea>
+                <button onclick="logActivity('{{ c.id }}')">Log</button>
+              </div>
+
+              <h3>Activity ({{ c.activities|length }})</h3>
+              <div class="list-scroll">
+                {% if c.activities %}
+                  {% for a in c.activities %}
+                  <div class="activity">
+                    <div class="meta">{{ a.method }} → {{ a.outcome.replace('_',' ') }} · {{ a.date }}</div>
+                    {% if a.notes %}{{ a.notes }}{% endif %}
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="empty-note">No activity yet</div>
+                {% endif %}
+              </div>
+
+              <h3>Comments</h3>
+              <div class="list-scroll">
+                {% if c.comments %}
+                  {% for cm in c.comments %}
+                  <div class="comment">
+                    <div class="meta">{{ cm.author }} · {{ cm.ts }}</div>
+                    {{ cm.text }}
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="empty-note">No comments yet</div>
+                {% endif %}
+              </div>
+              <textarea id="comment-{{ c.id }}" placeholder="Add a note..."></textarea>
+              <button onclick="addComment('{{ c.id }}')">Save comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <p>No network contacts yet.</p>
+        <p>Click <strong>+ Add contact</strong> or ask to seed from <code>network_seed.json</code>.</p>
+      </div>
+    {% endif %}
+  </main>
+
+  <div class="modal" id="add-modal">
+    <div class="modal-backdrop" onclick="closeAddModal()"></div>
+    <div class="modal-content">
+      <h2>Add network contact</h2>
+      <label>Name *</label>
+      <input type="text" id="add-name" required>
+      <label>Type *</label>
+      <select id="add-type">
+        {% for t in network_types %}<option value="{{ t }}">{{ t.replace('_',' ').title() }}</option>{% endfor %}
+      </select>
+      <label>Firm (if person)</label>
+      <input type="text" id="add-firm">
+      <label>Role in firm</label>
+      <input type="text" id="add-role">
+      <label>How they help</label>
+      <textarea id="add-help" placeholder="e.g. Facade consultant on Westin; specs cladding packages"></textarea>
+      <label>Phone</label>
+      <input type="text" id="add-phone">
+      <label>Email</label>
+      <input type="text" id="add-email">
+      <label>LinkedIn</label>
+      <input type="text" id="add-linkedin">
+      <label>Website</label>
+      <input type="text" id="add-website">
+      <label>Source</label>
+      <input type="text" id="add-source" placeholder="manual / LinkedIn / referral / website">
+      <label>Relationship</label>
+      <select id="add-relationship">
+        <option>cold</option><option>warm</option><option>referred</option>
+      </select>
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeAddModal()">Cancel</button>
+        <button onclick="submitAdd()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function toggleCard(h) { h.parentElement.classList.toggle('open'); }
+
+    function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
+    function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    async function submitAdd() {
+      const payload = {
+        name: document.getElementById('add-name').value.trim(),
+        type: document.getElementById('add-type').value,
+        firm: document.getElementById('add-firm').value.trim(),
+        role_in_firm: document.getElementById('add-role').value.trim(),
+        how_they_help: document.getElementById('add-help').value.trim(),
+        phone: document.getElementById('add-phone').value.trim(),
+        email: document.getElementById('add-email').value.trim(),
+        linkedin: document.getElementById('add-linkedin').value.trim(),
+        website: document.getElementById('add-website').value.trim(),
+        source: document.getElementById('add-source').value.trim() || 'manual',
+        relationship: document.getElementById('add-relationship').value,
+      };
+      if (!payload.name) { showToast('Name required'); return; }
+      const r = await fetch('/api/network', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      if (r.ok) { showToast('Added'); setTimeout(() => location.reload(), 400); }
+      else { showToast('Failed to add'); }
+    }
+
+    async function setStatus(id, status) {
+      const r = await fetch('/api/network/' + id, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({status}),
+      });
+      if (r.ok) showToast('Status: ' + status);
+      else showToast('Failed');
+    }
+
+    async function saveNextAction(id) {
+      const payload = {
+        next_action: document.getElementById('next-action-' + id).value,
+        next_action_due: document.getElementById('next-due-' + id).value,
+      };
+      const r = await fetch('/api/network/' + id, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      if (r.ok) showToast('Saved');
+    }
+
+    async function logActivity(id) {
+      const payload = {
+        target_type: 'network', target_key: id,
+        method: document.getElementById('method-' + id).value,
+        outcome: document.getElementById('outcome-' + id).value,
+        notes: document.getElementById('notes-' + id).value,
+      };
+      const r = await fetch('/api/activity', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      if (r.ok) { showToast('Activity logged'); setTimeout(() => location.reload(), 400); }
+    }
+
+    async function addComment(id) {
+      const el = document.getElementById('comment-' + id);
+      const text = el.value.trim();
+      if (!text) return;
+      const r = await fetch('/api/network/' + id + '/comment', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({text}),
+      });
+      if (r.ok) { showToast('Comment saved'); setTimeout(() => location.reload(), 400); }
+    }
+
+    // Filters
+    function filterCards() {
+      const type = document.getElementById('filter-type').value;
+      const status = document.getElementById('filter-status').value;
+      const rel = document.getElementById('filter-relationship').value;
+      const q = document.getElementById('search').value.toLowerCase();
+      document.querySelectorAll('.card').forEach(el => {
+        const ok = (!type || el.dataset.type === type)
+          && (!status || el.dataset.status === status)
+          && (!rel || el.dataset.relationship === rel)
+          && (!q || el.textContent.toLowerCase().includes(q));
+        el.style.display = ok ? '' : 'none';
+      });
+    }
+    ['filter-type','filter-status','filter-relationship','search'].forEach(id => {
+      document.getElementById(id).addEventListener('change', filterCards);
+      document.getElementById(id).addEventListener('input', filterCards);
+    });
+  </script>
+</body>
+</html>

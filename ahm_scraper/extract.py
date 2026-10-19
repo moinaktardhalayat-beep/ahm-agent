@@ -3,8 +3,6 @@
 Every source returns unstructured HTML text. This module turns that text
 into structured fields. If extraction fails for a required field, callers
 should drop the record rather than write garbage.
-
-Run from ah_m_scraper root:  import extract
 """
 from __future__ import annotations
 
@@ -19,7 +17,7 @@ BENGALURU_MARKERS = (
     "indiranagar", "hsr layout", "sarjapur", "bellandur", "devanahalli",
     "hennur", "malleshwaram", "rajajinagar", "vijayanagar",
     "kengeri", "bommanahalli", "bannerghatta", "kanakapura", "thanisandra",
-    "jakkur", "manyata", "peenya", "yeshwanthpur", "hosur road",
+    "jakkur", "manyata", "peenya", "yeshwanthpur", "yeshwantpur", "hosur road",
     "old madras road", "outer ring road", "orr", "tumkur road",
 )
 
@@ -69,6 +67,23 @@ def has_negative_keyword(text: Optional[str]) -> bool:
     return any(neg in lower for neg in NEGATIVE_KEYWORDS)
 
 
+def trim_project_name(name: str, max_len: int = 150) -> str:
+    """Cut project name at geo markers or sentence boundaries.
+
+    Real examples this fixes:
+      'Tribute Portfolio & The Westin, Whitefield Latitude, Longitude 12.977222, 77.715060 Latest Status ...'
+      -> 'Tribute Portfolio & The Westin, Whitefield'
+    """
+    if not name:
+        return ""
+    for marker in (" Latitude", " Longitude", " Lat ", " Lng ", " GPS", " Location"):
+        idx = name.find(marker)
+        if 0 < idx < len(name):
+            name = name[:idx].strip().rstrip(",.;: -")
+            break
+    return name[:max_len].strip()
+
+
 def extract_project_name(text: Optional[str], url: Optional[str] = None) -> str:
     """
     Best-effort project name extraction.
@@ -93,15 +108,15 @@ def extract_project_name(text: Optional[str], url: Optional[str] = None) -> str:
         m = re.search(pat, text, re.IGNORECASE)
         if m:
             candidate = clean_text(m.group(1))
-            if 2 <= len(candidate) <= 150:
-                return candidate
+            if 2 <= len(candidate) <= 200:
+                return trim_project_name(candidate)
 
     if url:
         slug = url.split("?")[0].rstrip("/").split("/")[-1]
         slug = re.sub(r"[-_]+", " ", slug)
         slug = re.sub(r"[^A-Za-z0-9 &']", "", slug).strip()
         if slug and len(slug) > 3:
-            return slug.title()
+            return trim_project_name(slug.title())
 
     return ""
 

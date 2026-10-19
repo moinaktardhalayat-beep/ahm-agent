@@ -1,22 +1,19 @@
-"""Google News RSS discovery with strict relevance filter.
+"""Google News RSS discovery with strict relevance filter and event dedup.
 
-Prior version had no filter — 12 of 15 rows were irrelevant. This version
-requires (Bengaluru AND sector keyword AND action keyword) and rejects
-noise keywords before yielding.
+Filters out noise (airlines, leases, retail), then dedups by (brand, location)
+so 5 outlets covering the same Hilton signing produce 1 row, not 5.
 """
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
-from typing import Iterable
 
 import feedparser
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from extract import (
-    clean_text, is_bengaluru, has_sector_keyword, has_negative_keyword,
-)
+from extract import clean_text, is_bengaluru, has_sector_keyword
 
 
 GOOGLE_NEWS_FEEDS = [
@@ -35,9 +32,39 @@ ACTION_KEYWORDS = (
     "invest", "invests", "break ground", "foundation", "topping out",
 )
 
+_NOISE_WORDS = (
+    " opinion ", " editorial ", " protest ", " activist ", " police ",
+    " crime ", " robbery ", " accident ", " lawsuit ", " court ",
+    " tree felling ", " resale ",
+    " flight ", " flights ", " airline ", " airlines ", " air route ",
+    " lease ", " leases ", " leased ", " rental ", " tenancy ",
+    " buys ", " bought ", " purchased ", " acquisition ",
+    " buys multiple ", " acquires stake ", " stake in ",
+    " cafe opens ", " restaurant opens ", " salon opens ",
+)
+
+_HOTEL_BRANDS = (
+    "hilton", "accor", "ihcl", "marriott", "hyatt", "taj", "radisson",
+    "wyndham", "itc", "lemontree", "sarbe", "fern", "novotel",
+    "ibis", "pullman", "conrad", "gateway", "westin", "sheraton",
+    "st_regis", "four_seasons", "oberoi", "roseate", "hyatt_place",
+    "doubletree", "holiday_inn", "leela",
+)
+
+_LOCATION_HINTS = (
+    "airport", "yeshwantpur", "yeshwanthpur", "whitefield",
+    "yelahanka", "electronic city", "hebbal", "manyata",
+    "richmond", "indiranagar", "koramangala", "jp nagar", "jayanagar",
+    "bellandur", "devanahalli", "hennur", "hsr", "malleshwaram",
+)
+
+
+def _is_noise(text: str) -> bool:
+    padded = " " + text.lower() + " "
+    return any(w in padded for w in _NOISE_WORDS)
+
 
 def _relevant(title: str, summary: str):
-    """Return (keep, reason)."""
     combined = f"{title} {summary}"
     if not is_bengaluru(combined):
         return False, "not Bengaluru"
@@ -46,15 +73,42 @@ def _relevant(title: str, summary: str):
     lower = combined.lower()
     if not any(kw in lower for kw in ACTION_KEYWORDS):
         return False, "no action keyword"
-    if has_negative_keyword(combined):
-        return False, "negative signal"
+    if _is_noise(combined):
+        return False, "noise signal"
     return True, "ok"
 
 
+def _event_key(title: str) -> str:
+    """Group news stories by underlying event: (brand, location).
+
+    Examples:
+      'Hilton signs 2 Bengaluru Airport hotels with Kalyani Group'
+      'Hilton Signs Two Airport Hotels in Bengaluru'
+      'Hilton Signs Conrad Bengaluru Airport and Hilton Bengaluru Airport'
+      -> all produce 'hilton|airport'
+    """
+    lower = title.lower()
+    brand = next((b for b in _HOTEL_BRANDS if b in lower), "")
+    location = next((loc for loc in _LOCATION_HINTS if loc in lower), "")
+
+    if brand:
+        return f"{brand}|{location}"
+
+    stopwords = {
+        "the", "a", "an", "in", "with", "of", "and", "to", "for",
+        "signs", "sign", "signed", "new", "hotel", "hotels",
+        "bengaluru", "bangalore", "development", "project",
+        "launches", "launch", "as", "on", "by", "from",
+    }
+    words = re.findall(r"[a-z]+", lower)
+    sig = [w for w in words if w not in stopwords and len(w) > 3][:3]
+    return "|".join(sig) if sig else lower[:40]
+
+
 def fetch_news(max_per_feed: int = 40) -> list:
-    """Fetch all feeds, filter strictly, return relevant items."""
+    """Fetch all feeds, filter, and dedup by underlying event."""
     out = []
-    seen = set()
+    seen_events = set()
     for feed_url in GOOGLE_NEWS_FEEDS:
         try:
             parsed = feedparser.parse(feed_url)
@@ -70,14 +124,15 @@ def fetch_news(max_per_feed: int = 40) -> list:
 
             if not title or not link:
                 continue
-            key = title.lower()
-            if key in seen:
-                continue
-            seen.add(key)
 
             keep, reason = _relevant(title, summary)
             if not keep:
                 continue
+
+            event_key = _event_key(title)
+            if event_key in seen_events:
+                continue
+            seen_events.add(event_key)
 
             out.append({
                 "title": title,
@@ -88,5 +143,5 @@ def fetch_news(max_per_feed: int = 40) -> list:
             kept += 1
 
         tag = feed_url.split("q=")[1].split("&")[0] if "q=" in feed_url else feed_url
-        print(f"[google_news] {tag!r}: kept {kept}")
+        print(f"[google_news] {tag!r}: kept {kept} new events")
     return out

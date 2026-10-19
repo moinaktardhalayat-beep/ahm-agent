@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AHM Pipeline Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+        .topnav {
+      background: #fff; padding: 0 32px; border-bottom: 1px solid #e5e5e7;
+      display: flex; gap: 4px;
+    }
+    .topnav a {
+      padding: 14px 18px; color: #6e6e73; text-decoration: none;
+      font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent;
+    }
+    .topnav a:hover { color: #1d1d1f; }
+    .topnav a.active { color: #0071e3; border-bottom-color: #0071e3; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f7; margin: 0; color: #1d1d1f; font-size: 14px;
+    }
+    header {
+      background: #fff; border-bottom: 1px solid #e5e5e7;
+      padding: 20px 32px; position: sticky; top: 0; z-index: 10;
+    }
+    h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 600; }
+    .stats { display: flex; gap: 24px; margin-top: 10px; font-size: 13px; color: #6e6e73; flex-wrap: wrap; }
+    .stats b { color: #1d1d1f; font-weight: 600; }
+    .toolbar {
+      background: #fff; padding: 12px 32px; border-bottom: 1px solid #e5e5e7;
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      position: sticky; top: 100px; z-index: 9;
+    }
+    select, input[type="text"] {
+      padding: 7px 10px; border: 1px solid #d2d2d7; border-radius: 6px;
+      background: #fff; font-size: 13px; min-width: 160px; font-family: inherit;
+    }
+    input[type="text"] { min-width: 260px; }
+    button {
+      padding: 7px 14px; border: none; border-radius: 6px;
+      background: #0071e3; color: #fff; font-size: 13px;
+      cursor: pointer; font-weight: 500; font-family: inherit;
+    }
+    button:hover { background: #0063c8; }
+    button.secondary {
+      background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7;
+    }
+    button.secondary:hover { background: #f5f5f7; }
+    button.small { padding: 4px 10px; font-size: 12px; }
+    main { padding: 20px 32px 60px 32px; max-width: 1400px; margin: 0 auto; }
+    .lead {
+      background: #fff; border: 1px solid #e5e5e7; border-radius: 10px;
+      margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.15s;
+    }
+    .lead:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .lead-header {
+      padding: 16px 20px; cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .lead-header:hover { background: #fafafa; }
+    .lead-title { flex: 1; font-weight: 500; font-size: 15px; line-height: 1.4; }
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge.verified { background: #d1f4d8; color: #166534; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge.reported { background: #fef3c7; color: #92400e; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge.inference { background: #e5e7eb; color: #374151; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge.sector { background: #dbeafe; color: #1e40af; }
+    .badge.count { background: #f5f5f7; color: #6e6e73; }
+    .chevron {
+      width: 20px; height: 20px; flex-shrink: 0;
+      transition: transform 0.2s; color: #86868b;
+    }
+    .lead.open .chevron { transform: rotate(90deg); }
+    .lead-body { display: none; border-top: 1px solid #e5e5e7; }
+    .lead.open .lead-body { display: block; }
+    .body-inner {
+      padding: 20px 24px;
+      display: grid; grid-template-columns: 1fr 340px; gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .body-inner { grid-template-columns: 1fr; }
+    }
+    .field-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .field-table td {
+      padding: 8px 0; border-bottom: 1px solid #f0f0f0; vertical-align: top;
+    }
+    .field-table td:first-child {
+      width: 190px; color: #6e6e73; font-weight: 500; padding-right: 16px;
+    }
+    .field-table td.empty { color: #c7c7cc; font-style: italic; }
+    a { color: #0071e3; text-decoration: none; word-break: break-all; }
+    a:hover { text-decoration: underline; }
+    .comments-panel h3 {
+      margin: 0 0 12px 0; font-size: 12px; font-weight: 600;
+      text-transform: uppercase; color: #6e6e73; letter-spacing: 0.5px;
+    }
+    .comments-list { max-height: 320px; overflow-y: auto; margin-bottom: 12px; }
+    .comment {
+      background: #f5f5f7; padding: 10px 12px; border-radius: 8px;
+      margin-bottom: 8px; font-size: 13px; line-height: 1.5;
+      white-space: pre-wrap; word-wrap: break-word;
+    }
+    .comment .meta {
+      font-size: 11px; color: #86868b; margin-bottom: 4px;
+    }
+    .comments-empty {
+      font-size: 13px; color: #86868b; padding: 12px 0; font-style: italic;
+    }
+    textarea {
+      width: 100%; min-height: 80px; padding: 10px;
+      border: 1px solid #d2d2d7; border-radius: 8px;
+      font-size: 13px; font-family: inherit; resize: vertical;
+      margin-bottom: 8px;
+    }
+    textarea:focus, input:focus, select:focus {
+      outline: none; border-color: #0071e3;
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+    }
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: #86868b;
+      background: #fff; border-radius: 10px;
+    }
+    .empty-state code {
+      background: #f5f5f7; padding: 2px 8px; border-radius: 4px;
+      font-size: 12px; color: #1d1d1f;
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1d1d1f; color: #fff; padding: 12px 20px;
+      border-radius: 8px; font-size: 13px;
+      opacity: 0; transform: translateY(20px);
+      transition: all 0.3s; pointer-events: none; z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .field-label { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a href="/" class="active">Projects</a>
+    <a href="/network">Network</a>
+    <a href="/weekly">Weekly Target</a>
+  </nav>
+  <header>
+    <h1>AHM Pipeline Dashboard</h1>
+    <div class="stats">
+      <span><b>{{ total }}</b> leads</span>
+      <span><b>{{ verified }}</b> verified</span>
+      <span><b>{{ reported }}</b> reported</span>
+      <span><a href="/download/csv">↓ Download CSV</a></span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <select id="filter-confidence">
+      <option value="">All confidence</option>
+      <option>Verified</option>
+      <option>Reported</option>
+      <option>Inference</option>
+    </select>
+    <select id="filter-sector">
+      <option value="">All sectors</option>
+      <option>Hospitality</option>
+      <option>Commercial</option>
+      <option>News signal</option>
+    </select>
+    <select id="filter-stage">
+      <option value="">All stages</option>
+      <option>Pre-Construction</option>
+      <option>Announced</option>
+      <option>Under Construction</option>
+    </select>
+    <input type="text" id="search" placeholder="Search project, owner, consultant…">
+    <button class="secondary" id="toggle-all-btn" onclick="toggleAll()">Expand all</button>
+    <button onclick="location.reload()">Refresh</button>
+  </div>
+
+  <main id="leads">
+    {% if csv_missing %}
+      <div class="empty-state">
+        <p>No <code>phase0_leads.csv</code> found yet.</p>
+        <p>Run <code>python3 ahm_scraper/pipeline.py</code>, then refresh.</p>
+      </div>
+    {% elif leads %}
+      {% for lead in leads %}
+      <div class="lead"
+           data-key="{{ lead._key }}"
+           data-confidence="{{ lead.confidence_label }}"
+           data-sector="{{ lead.sector }}"
+           data-stage="{{ lead.project_stage }}">
+        <div class="lead-header" onclick="toggleLead(this)">
+          <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path d="M7 5l6 5-6 5V5z"/></svg>
+          <div class="lead-title">{{ lead.project_name }}</div>
+          {% if 'Verified' in lead.confidence_label %}
+            <span class="badge verified">Verified</span>
+          {% elif 'Reported' in lead.confidence_label %}
+            <span class="badge reported">Reported</span>
+          {% else %}
+            <span class="badge inference">Inference</span>
+          {% endif %}
+          {% if lead.sector and lead.sector != 'News signal' %}
+            <span class="badge sector">{{ lead.sector }}</span>
+          {% endif %}
+          {% if lead._comment_count > 0 %}
+            <span class="badge count">{{ lead._comment_count }} 💬</span>
+          {% endif %}
+        </div>
+        <div class="lead-body">
+          <div class="body-inner">
+            <div>
+              <table class="field-table">
+                {% for field, value in lead.items() if not field.startswith('_') %}
+                  {% if field != 'project_name' %}
+                  <tr>
+                    <td class="field-label">{{ field.replace('_', ' ').title() }}</td>
+                    {% if field == 'source_url' and value %}
+                      <td><a href="{{ value }}" target="_blank" rel="noopener">{{ value[:80] }}{% if value|length > 80 %}…{% endif %}</a></td>
+                    {% elif value and value != 'UNKNOWN' %}
+                      <td>{{ value }}</td>
+                    {% else %}
+                      <td class="empty">{{ value or 'unknown' }}</td>
+                    {% endif %}
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+              </table>
+            </div>
+            <div class="comments-panel">
+              <h3>Comments</h3>
+              <div class="comments-list" id="comments-{{ loop.index }}">
+                {% if lead._comments %}
+                  {% for c in lead._comments %}
+                  <div class="comment">
+                    <div class="meta">{{ c.author }} · {{ c.ts }}</div>
+                    {{ c.text }}
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="comments-empty">No comments yet</div>
+                {% endif %}
+              </div>
+              <textarea id="comment-input-{{ loop.index }}" placeholder="Add a note (research findings, next step, contact info)…"></textarea>
+              <button onclick="addComment({{ loop.index }})">Save comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <p>CSV exists but has no rows.</p>
+        <p>Check <code>ahm_scraper/output/phase0_rejected.csv</code> — the quality gate may have rejected everything.</p>
+      </div>
+    {% endif %}
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function toggleLead(header) {
+      header.parentElement.classList.toggle('open');
+    }
+
+    let allOpen = false;
+    function toggleAll() {
+      allOpen = !allOpen;
+      document.querySelectorAll('.lead').forEach(el => {
+        el.classList.toggle('open', allOpen);
+      });
+      document.getElementById('toggle-all-btn').textContent =
+        allOpen ? 'Collapse all' : 'Expand all';
+    }
+
+    function filterLeads() {
+      const conf = document.getElementById('filter-confidence').value.toLowerCase();
+      const sector = document.getElementById('filter-sector').value.toLowerCase();
+      const stage = document.getElementById('filter-stage').value.toLowerCase();
+      const search = document.getElementById('search').value.toLowerCase();
+      let visible = 0;
+
+      document.querySelectorAll('.lead').forEach(el => {
+        const leadConf = el.dataset.confidence.toLowerCase();
+        const leadSector = el.dataset.sector.toLowerCase();
+        const leadStage = el.dataset.stage.toLowerCase();
+        const leadText = el.textContent.toLowerCase();
+
+        const match =
+          (!conf || leadConf.includes(conf)) &&
+          (!sector || leadSector === sector) &&
+          (!stage || leadStage.includes(stage)) &&
+          (!search || leadText.includes(search));
+
+        el.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+    }
+
+    document.getElementById('filter-confidence').addEventListener('change', filterLeads);
+    document.getElementById('filter-sector').addEventListener('change', filterLeads);
+    document.getElementById('filter-stage').addEventListener('change', filterLeads);
+    document.getElementById('search').addEventListener('input', filterLeads);
+
+    async function addComment(idx) {
+      const input = document.getElementById('comment-input-' + idx);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const card = input.closest('.lead');
+      const key = card.dataset.key;
+
+      try {
+        const res = await fetch('/api/comment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key, text }),
+        });
+        if (!res.ok) throw new Error('save failed');
+        showToast('Comment saved');
+        setTimeout(() => location.reload(), 350);
+      } catch (e) {
+        showToast('Failed to save — check server logs');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>

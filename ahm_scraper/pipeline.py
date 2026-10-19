@@ -4,6 +4,7 @@ Additions vs. prior version:
   - Quality gate before writing (drops obvious garbage)
   - Rejected-row log (so you can see what was filtered and why)
   - Better dedup key (name + owner, both normalized)
+  - PropContext (mcp) failures handled gracefully instead of 6-line error spam
 """
 import csv
 import re
@@ -34,9 +35,14 @@ def _safe(label, fn):
 
 
 def _from_propcontext():
-    from sources.propcontext_rera import search_bengaluru_projects
+    try:
+        from sources.propcontext_rera import search_bengaluru_projects
+        projects = list(search_bengaluru_projects())
+    except Exception as e:
+        print(f"[propcontext_rera] skipped: {type(e).__name__} (mcp not available)")
+        return []
     out = []
-    for p in search_bengaluru_projects():
+    for p in projects:
         name = (p.get("project_name") or p.get("name") or "").strip()
         if not name:
             continue
@@ -171,14 +177,6 @@ def run():
     for label, fn in SOURCES:
         raw.extend(_safe(label, fn))
 
-    accepted, rejected = [], []
-    for r in raw:
-        ok, reason = _is_usable(r)
-        (accepted if ok else rejected).append((r, reason) if not ok else r)
-        if not ok:
-            rejected[-1] = (r, reason)
-
-    # Rebuild cleanly (simpler than the conditional above)
     accepted = [r for r in raw if _is_usable(r)[0]]
     rejected = [(r, _is_usable(r)[1]) for r in raw if not _is_usable(r)[0]]
 
