@@ -1,4 +1,10 @@
-"""Merge all sources, deduplicate, emit Phase 0 CSV."""
+"""Merge all sources, filter for quality, deduplicate, emit Phase 0 CSV.
+
+Additions vs. prior version:
+  - Quality gate before writing (drops obvious garbage)
+  - Rejected-row log (so you can see what was filtered and why)
+  - Better dedup key (name + owner, both normalized)
+"""
 import csv
 import re
 import sys
@@ -10,6 +16,7 @@ sys.path.insert(0, str(HERE))
 from models import ProjectRecord
 
 OUT = HERE / "output" / "phase0_leads.csv"
+REJECTED_LOG = HERE / "output" / "phase0_rejected.csv"
 
 
 def _norm(s):
@@ -30,8 +37,11 @@ def _from_propcontext():
     from sources.propcontext_rera import search_bengaluru_projects
     out = []
     for p in search_bengaluru_projects():
+        name = (p.get("project_name") or p.get("name") or "").strip()
+        if not name:
+            continue
         out.append(ProjectRecord(
-            project_name=p.get("project_name") or p.get("name", "") or "",
+            project_name=name,
             location=p.get("locality") or p.get("location") or "Bengaluru",
             sector=p.get("project_type") or p.get("type") or "Residential",
             owner_developer=p.get("promoter") or p.get("builder_name") or "",
@@ -52,7 +62,7 @@ def _from_biltrax():
             continue
         out.append(ProjectRecord(
             project_name=d.get("project_name", ""),
-            location=d.get("location", ""),
+            location=d.get("location", "Bengaluru"),
             sector=d.get("sector", "Hospitality"),
             owner_developer=d.get("owner_developer", ""),
             architect_consultant=d.get("architect_consultant", ""),
@@ -74,7 +84,11 @@ def _from_facade_news():
         if not d:
             continue
         out.append(ProjectRecord(
-            project_name="See source article",
+            project_name=d.get("project_name", ""),
+            location="Bengaluru",
+            sector="Commercial",
+            project_stage="",
+            stage_evidence_date=d.get("stage_evidence_date", ""),
             facade_acp_scope_evidence=d.get("facade_acp_scope_evidence", ""),
             source_url=d.get("source_url", url),
             confidence_label="Verified (trade press)",
@@ -91,7 +105,7 @@ def _from_google_news():
             sector="News signal",
             project_stage="Announced (unverified)",
             stage_evidence_date=n.get("published", ""),
-            facade_acp_scope_evidence=n.get("title", ""),
+            facade_acp_scope_evidence=n.get("summary", "") or n.get("title", ""),
             source_url=n.get("link", ""),
             confidence_label="Reported (news)",
         ))
@@ -102,10 +116,17 @@ def _from_architect_sites():
     from sources.architect_sites import SITES, scrape_site
     out = []
     for name, url in SITES.items():
-        for r in scrape_site(name, url):
+        try:
+            results = scrape_site(name, url)
+        except Exception as e:
+            print(f"[architect_sites] {name} failed: {e}")
+            continue
+        for r in results:
+            title = (r.get("project_titles") or "")[:150].strip()
+            if not title:
+                continue
             out.append(ProjectRecord(
-                project_name=(r.get("project_titles", "")[:150]
-                              or r.get("page_title", "")),
+                project_name=title,
                 architect_consultant=name,
                 facade_acp_scope_evidence=r.get("facade_keywords_found", ""),
                 source_url=url,
@@ -123,14 +144,47 @@ SOURCES = [
 ]
 
 
+def _is_usable(r: ProjectRecord):
+    """Quality gate: minimum bar for a record to appear in the CSV."""
+    name = (r.project_name or "").strip()
+    if len(name) < 4:
+        return False, "project_name too short"
+    if len(name) > 180:
+        return False, "project_name too long (likely scraped body)"
+    if name.count(" ") > 25:
+        return False, "project_name has >25 words"
+    if name.lower().startswith("see source"):
+        return False, "placeholder name"
+    if not r.source_url or not r.source_url.startswith("http"):
+        return False, "missing or invalid source_url"
+    return True, "ok"
+
+
+def _dedup_key(r: ProjectRecord) -> str:
+    name = _norm(r.project_name[:80])
+    owner = _norm(r.owner_developer[:40]) if r.owner_developer else ""
+    return f"{name}|{owner}"
+
+
 def run():
-    records = []
+    raw = []
     for label, fn in SOURCES:
-        records.extend(_safe(label, fn))
+        raw.extend(_safe(label, fn))
+
+    accepted, rejected = [], []
+    for r in raw:
+        ok, reason = _is_usable(r)
+        (accepted if ok else rejected).append((r, reason) if not ok else r)
+        if not ok:
+            rejected[-1] = (r, reason)
+
+    # Rebuild cleanly (simpler than the conditional above)
+    accepted = [r for r in raw if _is_usable(r)[0]]
+    rejected = [(r, _is_usable(r)[1]) for r in raw if not _is_usable(r)[0]]
 
     seen, unique = set(), []
-    for r in records:
-        key = _norm(r.project_name[:60]) + "|" + _norm(r.owner_developer[:40])
+    for r in accepted:
+        key = _dedup_key(r)
         if key in seen:
             continue
         seen.add(key)
@@ -143,7 +197,17 @@ def run():
         for r in unique:
             w.writerow(r.to_row())
 
-    print(f"\nWrote {len(unique)} unique rows -> {OUT}")
+    with REJECTED_LOG.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["reason", "project_name", "source_url"])
+        for r, reason in rejected:
+            w.writerow([reason, (r.project_name or "")[:200], r.source_url])
+
+    print()
+    print(f"Raw rows:      {len(raw)}")
+    print(f"Rejected:      {len(rejected)}  (see {REJECTED_LOG.name})")
+    print(f"Duplicates:    {len(accepted) - len(unique)}")
+    print(f"Wrote unique:  {len(unique)} -> {OUT}")
     return len(unique)
 
 
