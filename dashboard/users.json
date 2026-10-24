@@ -1,0 +1,22 @@
+{
+  "users": {
+    "moin": {
+      "username": "moin",
+      "display_name": "Moin",
+      "role": "admin",
+      "password_hash": "pbkdf2_sha256$100000$0841a7ae8e579eff3fd104415ef04898$bb0e24c333c9a7cfa8d9dec2eaa6d2598da5d0c267db80af046f8b466836499a"
+    },
+    "kartik": {
+      "username": "kartik",
+      "display_name": "Kartik",
+      "role": "member",
+      "password_hash": "pbkdf2_sha256$100000$aac1ddbc11b15349f1b0fa3e4b2812a2$1433c409631aba7380f06c858f54dc474d06d79f38a9943dd17e9bd5f1eab716"
+    },
+    "saad": {
+      "username": "saad",
+      "display_name": "Saad",
+      "role": "member",
+      "password_hash": "pbkdf2_sha256$100000$c71927ea1001af9a3e6feeece21d8c91$9f8011125be2896e110ac412f9b88086b7b80c28047b50f9a8738628b3313c3f"
+    }
+  }
+}

@@ -21,3 +21,4 @@ dmypy.json
 *.key
 *secret*.json
 *credentials*.json
+dashboard/db_config.py

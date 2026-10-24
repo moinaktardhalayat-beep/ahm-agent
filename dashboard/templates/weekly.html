@@ -7,10 +7,15 @@
   <style>
     * { box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; margin: 0; color: #1d1d1f; font-size: 14px; }
-    .topnav { background: #fff; padding: 0 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 4px; }
+    .topnav { background: #fff; padding: 0 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 4px; align-items: center; }
     .topnav a { padding: 14px 18px; color: #6e6e73; text-decoration: none; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; }
     .topnav a:hover { color: #1d1d1f; }
     .topnav a.active { color: #0071e3; border-bottom-color: #0071e3; }
+    .topnav .spacer { flex: 1; }
+    .topnav .user { padding: 14px 12px; font-size: 13px; color: #6e6e73; }
+    .topnav .user b { color: #1d1d1f; }
+    .topnav .logout { padding: 14px 18px; color: #6e6e73; font-size: 13px; text-decoration: none; }
+    .topnav .logout:hover { color: #d70015; }
     header { background: #fff; border-bottom: 1px solid #e5e5e7; padding: 20px 32px; }
     h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 600; }
     .subtitle { color: #6e6e73; font-size: 13px; }
@@ -29,8 +34,6 @@
     button { padding: 9px 16px; border: none; border-radius: 6px; background: #0071e3; color: #fff; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
     button:hover { background: #0063c8; }
     button.secondary { background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7; }
-    button.secondary:hover { background: #f5f5f7; }
-    button:disabled { background: #d2d2d7; cursor: not-allowed; }
     .actions-bar { display: flex; gap: 12px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
     .list { margin: 0; padding: 0; list-style: none; }
     .list li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
@@ -43,11 +46,8 @@
     .modal-content { position: relative; background: #fff; border-radius: 12px; padding: 24px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; }
     .modal-content h2 { margin: 0 0 12px 0; font-size: 18px; }
     .modal-content h3 { margin: 16px 0 8px 0; font-size: 14px; color: #d70015; text-transform: none; letter-spacing: 0; }
-    .modal-content p { margin: 8px 0; line-height: 1.5; }
     .modal-content ul { margin: 4px 0; padding-left: 20px; max-height: 200px; overflow-y: auto; font-size: 13px; }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #1d1d1f; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 100; }
-    .toast.show { opacity: 1; transform: translateY(0); }
     .stats-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
     .stat-box { background: #fff; border: 1px solid #e5e5e7; border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 180px; }
     .stat-box .num { font-size: 28px; font-weight: 600; }
@@ -59,6 +59,9 @@
     <a href="/">Projects</a>
     <a href="/network">Network</a>
     <a href="/weekly" class="active">Weekly Target</a>
+    <div class="spacer"></div>
+    <span class="user">Logged in as <b>{{ current_user.display_name or current_user.username }}</b>{% if is_admin %} <span style="color:#5b21b6;">(admin)</span>{% endif %}</span>
+    <a href="/logout" class="logout">Logout</a>
   </nav>
 
   <header>
@@ -68,93 +71,54 @@
 
   <main>
     <div class="stats-row">
-      <div class="stat-box">
-        <div class="num">{{ activities_count }}</div>
-        <div class="label">Activities logged</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">{{ processed_projects_count }}</div>
-        <div class="label">Projects acted on</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">{{ processed_network_count }}</div>
-        <div class="label">Network acted on</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">{{ unprocessed_total }}</div>
-        <div class="label">Unprocessed (all-time)</div>
-      </div>
+      <div class="stat-box"><div class="num">{{ activities_count }}</div><div class="label">Activities logged</div></div>
+      <div class="stat-box"><div class="num">{{ processed_projects_count }}</div><div class="label">Projects acted on</div></div>
+      <div class="stat-box"><div class="num">{{ processed_network_count }}</div><div class="label">Network acted on</div></div>
+      <div class="stat-box"><div class="num">{{ unprocessed_total }}</div><div class="label">Unprocessed (all-time)</div></div>
     </div>
 
     <div class="grid">
       <div class="panel">
         <h2>Projects added this week</h2>
         <div class="hint">Target: {{ projects_target }} new / week</div>
-        <div class="progress-bar">
-          <div class="progress-fill {{ projects_done_class }}" style="width: {{ projects_pct }}%"></div>
-        </div>
-        <div class="progress-stats">
-          <b>{{ new_projects_count }}</b><span>/ {{ projects_target }}</span>
-        </div>
+        <div class="progress-bar"><div class="progress-fill {{ projects_done_class }}" style="width: {{ projects_pct }}%"></div></div>
+        <div class="progress-stats"><b>{{ new_projects_count }}</b><span>/ {{ projects_target }}</span></div>
         <h3>New this week</h3>
-        {% if new_projects %}
-          <ul class="list">
-            {% for l in new_projects %}
-            <li>{{ l.project_name }}<small>{{ l.confidence_label }}</small></li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <div class="empty">No new projects this week</div>
-        {% endif %}
+        {% if new_projects %}<ul class="list">{% for l in new_projects %}<li>{{ l.project_name }}<small>{{ l.confidence_label }}</small></li>{% endfor %}</ul>
+        {% else %}<div class="empty">No new projects this week</div>{% endif %}
       </div>
 
       <div class="panel">
         <h2>Network added this week</h2>
         <div class="hint">Target: {{ network_target }} new / week</div>
-        <div class="progress-bar">
-          <div class="progress-fill {{ network_done_class }}" style="width: {{ network_pct }}%"></div>
-        </div>
-        <div class="progress-stats">
-          <b>{{ new_network_count }}</b><span>/ {{ network_target }}</span>
-        </div>
+        <div class="progress-bar"><div class="progress-fill {{ network_done_class }}" style="width: {{ network_pct }}%"></div></div>
+        <div class="progress-stats"><b>{{ new_network_count }}</b><span>/ {{ network_target }}</span></div>
         <h3>New this week</h3>
-        {% if new_network %}
-          <ul class="list">
-            {% for c in new_network %}
-            <li>{{ c.name }}{% if c.firm %} — {{ c.firm }}{% endif %}<small>{{ c.type or 'other' }}</small></li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <div class="empty">No new network contacts this week</div>
-        {% endif %}
+        {% if new_network %}<ul class="list">{% for c in new_network %}<li>{{ c.name }}{% if c.firm %} — {{ c.firm }}{% endif %}<small>{{ c.type or 'other' }}</small></li>{% endfor %}</ul>
+        {% else %}<div class="empty">No new network contacts this week</div>{% endif %}
       </div>
     </div>
 
+    {% if is_admin %}
     <div class="panel">
       <h2>Weekly scraper</h2>
-      <div class="hint">Runs the pipeline, adds only new projects (dedup by name+owner). Warns if last batch is unprocessed.</div>
+      <div class="hint">Runs the pipeline, adds only new projects. Warns if last batch is unprocessed.</div>
       <div class="actions-bar">
         <button id="run-btn" onclick="runScraper()">Run weekly scraper</button>
-        <span id="scraper-status" style="font-size:13px; color:#6e6e73;">
-          {% if last_run %}Last run: {{ last_run }}{% else %}Never run from this dashboard{% endif %}
-        </span>
+        <span id="scraper-status" style="font-size:13px; color:#6e6e73;">{% if last_run %}Last run: {{ last_run }}{% else %}Never run from this dashboard{% endif %}</span>
       </div>
     </div>
+    {% endif %}
 
     <div class="panel" style="margin-top:20px;">
       <h2>Recent activity (this week)</h2>
       {% if recent_activities %}
         <ul class="list">
           {% for a in recent_activities %}
-          <li>
-            <strong>{{ a.target_type }}</strong> · {{ a.target_key[:60] }}
-            <small>{{ a.method }} → {{ a.outcome }} · {{ a.date }}{% if a.notes %} · {{ a.notes[:80] }}{% endif %}</small>
-          </li>
+          <li><strong>{{ a.target_type }}</strong> · {{ a.target_key[:60] }}<small>{{ a.method }} → {{ a.outcome }} · {{ a.date }}{% if a.notes %} · {{ a.notes[:80] }}{% endif %}</small></li>
           {% endfor %}
         </ul>
-      {% else %}
-        <div class="empty">No activity logged this week yet</div>
-      {% endif %}
+      {% else %}<div class="empty">No activity logged this week yet</div>{% endif %}
     </div>
   </main>
 
@@ -163,94 +127,43 @@
     <div class="modal-content">
       <h2>Unprocessed items from last batch</h2>
       <p>You have <strong id="guard-total">0</strong> items that haven't been acted on yet. Running the scraper again will pull fresh data on top of these.</p>
-      <h3>Unprocessed projects (<span id="guard-leads-count">0</span>)</h3>
-      <ul id="guard-leads-list"></ul>
-      <h3>Unprocessed network contacts (<span id="guard-network-count">0</span>)</h3>
-      <ul id="guard-network-list"></ul>
-      <p style="color:#6e6e73; margin-top:16px; font-size:12px;">Recommended: review these first. Or proceed if fresh data is more urgent.</p>
-      <div class="modal-actions">
-        <button class="secondary" onclick="closeGuard()">Cancel</button>
-        <button onclick="proceedScraper()">Proceed anyway</button>
-      </div>
+      <h3>Unprocessed projects (<span id="guard-leads-count">0</span>)</h3><ul id="guard-leads-list"></ul>
+      <h3>Unprocessed network contacts (<span id="guard-network-count">0</span>)</h3><ul id="guard-network-list"></ul>
+      <div class="modal-actions"><button class="secondary" onclick="closeGuard()">Cancel</button><button onclick="proceedScraper()">Proceed anyway</button></div>
     </div>
   </div>
-
   <div class="toast" id="toast"></div>
 
   <script>
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2200);
-    }
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
     function closeGuard() { document.getElementById('guard-modal').classList.remove('open'); }
-
     async function runScraper() {
-      const btn = document.getElementById('run-btn');
-      const status = document.getElementById('scraper-status');
-      btn.disabled = true;
-      status.textContent = 'Checking for unprocessed items...';
-
+      const btn = document.getElementById('run-btn'), status = document.getElementById('scraper-status');
+      btn.disabled = true; status.textContent = 'Checking for unprocessed items...';
       try {
-        const check = await fetch('/api/scraper/check', {method: 'POST'});
-        const data = await check.json();
-
+        const data = await (await fetch('/api/scraper/check', {method: 'POST'})).json();
         if (data.unprocessed.total > 0) {
           document.getElementById('guard-total').textContent = data.unprocessed.total;
           document.getElementById('guard-leads-count').textContent = data.unprocessed.leads.length;
           document.getElementById('guard-network-count').textContent = data.unprocessed.network.length;
-
-          const leadList = document.getElementById('guard-leads-list');
-          leadList.innerHTML = data.unprocessed.leads.slice(0, 10).map(x => '<li>' + x + '</li>').join('')
-            + (data.unprocessed.leads.length > 10 ? '<li><em>... and ' + (data.unprocessed.leads.length - 10) + ' more</em></li>' : '');
-          const netList = document.getElementById('guard-network-list');
-          netList.innerHTML = data.unprocessed.network.slice(0, 10).map(x => '<li>' + x + '</li>').join('')
-            + (data.unprocessed.network.length > 10 ? '<li><em>... and ' + (data.unprocessed.network.length - 10) + ' more</em></li>' : '');
-
+          document.getElementById('guard-leads-list').innerHTML = data.unprocessed.leads.slice(0, 10).map(x => '<li>' + x + '</li>').join('') + (data.unprocessed.leads.length > 10 ? '<li><em>... and ' + (data.unprocessed.leads.length - 10) + ' more</em></li>' : '');
+          document.getElementById('guard-network-list').innerHTML = data.unprocessed.network.slice(0, 10).map(x => '<li>' + x + '</li>').join('') + (data.unprocessed.network.length > 10 ? '<li><em>... and ' + (data.unprocessed.network.length - 10) + ' more</em></li>' : '');
           document.getElementById('guard-modal').classList.add('open');
-          btn.disabled = false;
-          status.textContent = 'Awaiting confirmation';
-          return;
+          btn.disabled = false; status.textContent = 'Awaiting confirmation'; return;
         }
-
         await executeScraper();
-      } catch (e) {
-        showToast('Check failed: ' + e.message);
-        btn.disabled = false;
-      }
+      } catch (e) { showToast('Check failed: ' + e.message); btn.disabled = false; }
     }
-
-    async function proceedScraper() {
-      closeGuard();
-      await executeScraper();
-    }
-
+    async function proceedScraper() { closeGuard(); await executeScraper(); }
     async function executeScraper() {
-      const btn = document.getElementById('run-btn');
-      const status = document.getElementById('scraper-status');
-      btn.disabled = true;
-      status.textContent = 'Running pipeline (30–90 seconds)...';
-
+      const btn = document.getElementById('run-btn'), status = document.getElementById('scraper-status');
+      btn.disabled = true; status.textContent = 'Running pipeline (30–90 seconds)...';
       try {
-        const r = await fetch('/api/scraper/run', {
-          method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({force: true}),
-        });
+        const r = await fetch('/api/scraper/run', {method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({force: true})});
         const data = await r.json();
-        if (r.ok) {
-          status.textContent = 'Done — ' + data.new_projects + ' new, ' + data.skipped + ' skipped as duplicates';
-          showToast('Scraper done. ' + data.new_projects + ' new, ' + data.skipped + ' skipped.');
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          status.textContent = 'Failed: ' + (data.error || 'unknown');
-          showToast('Scraper failed: ' + (data.error || 'unknown'));
-          btn.disabled = false;
-        }
-      } catch (e) {
-        status.textContent = 'Error: ' + e.message;
-        showToast('Error: ' + e.message);
-        btn.disabled = false;
-      }
+        if (r.ok) { status.textContent = 'Done — ' + data.new_projects + ' new, ' + data.skipped + ' skipped'; showToast('Scraper done.'); setTimeout(() => location.reload(), 1500); }
+        else { status.textContent = 'Failed: ' + (data.error || 'unknown'); btn.disabled = false; }
+      } catch (e) { status.textContent = 'Error: ' + e.message; btn.disabled = false; }
     }
   </script>
 </body>

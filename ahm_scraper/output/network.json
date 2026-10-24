@@ -46,7 +46,7 @@
       "next_action": "Find principal on LinkedIn",
       "next_action_due": "",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T20:00:00"
+      "updated_at": "2026-10-24T14:28:06"
     },
     "net-paramountera": {
       "id": "net-paramountera",
@@ -92,7 +92,8 @@
       "next_action": "asked to contact builders rather than architects",
       "next_action_due": "2026-10-19",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T21:03:55"
+      "updated_at": "2026-10-24T14:47:54",
+      "assigned_to": "kartik"
     },
     "net-palladium": {
       "id": "net-palladium",
@@ -115,7 +116,8 @@
       "next_action": "",
       "next_action_due": "",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T21:01:37"
+      "updated_at": "2026-10-24T14:47:59",
+      "assigned_to": "saad"
     },
     "net-metaspace": {
       "id": "net-metaspace",
@@ -163,7 +165,7 @@
       "next_action": "Find Project Head / GM Construction on LinkedIn",
       "next_action_due": "",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T20:00:00"
+      "updated_at": "2026-10-24T14:29:40"
     },
     "net-brigade": {
       "id": "net-brigade",
@@ -186,7 +188,7 @@
       "next_action": "Find Project Head / Development Manager on LinkedIn",
       "next_action_due": "",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T20:00:00"
+      "updated_at": "2026-10-24T14:35:00"
     },
     "net-prestige": {
       "id": "net-prestige",
@@ -255,7 +257,7 @@
       "next_action": "Find IHCL development / projects contact for Yeshwantpur",
       "next_action_due": "",
       "created_at": "2026-10-19T20:00:00",
-      "updated_at": "2026-10-19T20:00:00"
+      "updated_at": "2026-10-24T14:30:11"
     },
     "net-puravankara": {
       "id": "net-puravankara",
