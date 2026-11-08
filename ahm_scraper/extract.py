@@ -1,25 +1,25 @@
-"""Shared text-extraction utilities for AHM scraper sources.
-
-Every source returns unstructured HTML text. This module turns that text
-into structured fields. If extraction fails for a required field, callers
-should drop the record rather than write garbage.
-"""
+"""Shared text-extraction utilities for AHM scraper sources."""
 from __future__ import annotations
 
 import re
 from typing import Optional
 
-
-BENGALURU_MARKERS = (
-    "bengaluru", "bangalore",
-    "whitefield", "yelahanka", "hebbal", "electronic city", "e-city",
-    "marathahalli", "kr puram", "jp nagar", "jayanagar", "koramangala",
-    "indiranagar", "hsr layout", "sarjapur", "bellandur", "devanahalli",
-    "hennur", "malleshwaram", "rajajinagar", "vijayanagar",
-    "kengeri", "bommanahalli", "bannerghatta", "kanakapura", "thanisandra",
-    "jakkur", "manyata", "peenya", "yeshwanthpur", "yeshwantpur", "hosur road",
-    "old madras road", "outer ring road", "orr", "tumkur road",
-)
+LOCATION_MARKERS = {
+    "bengaluru": (
+        "bengaluru", "bangalore", "whitefield", "yelahanka", "hebbal", "electronic city", "e-city",
+        "marathahalli", "kr puram", "jp nagar", "jayanagar", "koramangala", "indiranagar", 
+        "hsr layout", "sarjapur", "bellandur", "devanahalli", "hennur", "malleshwaram", 
+        "rajajinagar", "vijayanagar", "kengeri", "bommanahalli", "bannerghatta", "kanakapura", 
+        "thanisandra", "jakkur", "manyata", "peenya", "yeshwanthpur", "yeshwantpur", "hosur road",
+        "old madras road", "outer ring road", "orr", "tumkur road"
+    ),
+    "goa": (
+        "goa", "panaji", "panjim", "mapusa", "margao", "madgaon", "vasco", "calangute", 
+        "candolim", "baga", "anjuna", "arpora", "porvorim", "assagao", "siolim", "morjim", 
+        "mandrem", "colva", "benaulim", "varca", "cavelossim", "mobor", "dona paula", "pilerne",
+        "santa cruz", "miramar", "dabolim", "pernem", "old goa"
+    )
+}
 
 RELEVANT_SECTOR_KEYWORDS = (
     "commercial", "office", "hotel", "hospitality", "resort",
@@ -35,21 +35,22 @@ NEGATIVE_KEYWORDS = (
     "acquire floors", "buys floors",
 )
 
-
 def clean_text(text: Optional[str]) -> str:
     """Collapse whitespace and strip. Returns '' for None."""
     if not text:
         return ""
     return re.sub(r"\s+", " ", text).strip()
 
-
-def is_bengaluru(text: Optional[str]) -> bool:
-    """True if text mentions Bengaluru or a known locality."""
+def is_target_location(text: Optional[str], city: str = "bengaluru") -> bool:
+    """True if text mentions the target city or a known locality within it."""
     if not text:
         return False
     lower = text.lower()
-    return any(m in lower for m in BENGALURU_MARKERS)
-
+    city = city.lower()
+    
+    # Use specific markers if we have them, otherwise just look for the city name
+    markers = LOCATION_MARKERS.get(city, (city,))
+    return any(m in lower for m in markers)
 
 def has_sector_keyword(text: Optional[str]) -> bool:
     """True if text mentions a sector AHM cares about."""
@@ -58,7 +59,6 @@ def has_sector_keyword(text: Optional[str]) -> bool:
     lower = text.lower()
     return any(kw in lower for kw in RELEVANT_SECTOR_KEYWORDS)
 
-
 def has_negative_keyword(text: Optional[str]) -> bool:
     """True if text contains an obvious noise signal."""
     if not text:
@@ -66,14 +66,8 @@ def has_negative_keyword(text: Optional[str]) -> bool:
     lower = text.lower()
     return any(neg in lower for neg in NEGATIVE_KEYWORDS)
 
-
 def trim_project_name(name: str, max_len: int = 150) -> str:
-    """Cut project name at geo markers or sentence boundaries.
-
-    Real examples this fixes:
-      'Tribute Portfolio & The Westin, Whitefield Latitude, Longitude 12.977222, 77.715060 Latest Status ...'
-      -> 'Tribute Portfolio & The Westin, Whitefield'
-    """
+    """Cut project name at geo markers or sentence boundaries."""
     if not name:
         return ""
     for marker in (" Latitude", " Longitude", " Lat ", " Lng ", " GPS", " Location"):
@@ -83,18 +77,8 @@ def trim_project_name(name: str, max_len: int = 150) -> str:
             break
     return name[:max_len].strip()
 
-
 def extract_project_name(text: Optional[str], url: Optional[str] = None) -> str:
-    """
-    Best-effort project name extraction.
-
-    Strategy (first hit wins):
-      1. 'Name of the Project X'
-      2. 'Project Name: X'
-      3. 'proposed ... project - "X"'
-      4. Any quoted title with a capital letter
-      5. URL slug fallback
-    """
+    """Best-effort project name extraction."""
     if not text:
         text = ""
 
@@ -120,7 +104,6 @@ def extract_project_name(text: Optional[str], url: Optional[str] = None) -> str:
 
     return ""
 
-
 def extract_sqft(text: Optional[str]) -> str:
     """Extract construction/plot area in square feet, if present."""
     if not text:
@@ -130,7 +113,6 @@ def extract_sqft(text: Optional[str]) -> str:
         text, re.IGNORECASE,
     )
     return clean_text(m.group(1)) + " sq ft" if m else ""
-
 
 def extract_rupee_crore(text: Optional[str]) -> str:
     """Extract rupee-crore values. Handles 'INR 205 Cr' and '205 INR-Crore'."""
@@ -149,7 +131,6 @@ def extract_rupee_crore(text: Optional[str]) -> str:
     if m:
         return f"INR {clean_text(m.group(1))} Cr"
     return ""
-
 
 def extract_stage(text: Optional[str]) -> str:
     """Extract project stage from common phrasings."""
@@ -177,7 +158,6 @@ def extract_stage(text: Optional[str]) -> str:
             return label
     return ""
 
-
 def extract_date(text: Optional[str]) -> str:
     """Extract most-recent month-year date. Returns 'YYYY-MM' or ''."""
     if not text:
@@ -200,10 +180,7 @@ def extract_date(text: Optional[str]) -> str:
         return f"{m.group(1)}-{m.group(2)}"
     return ""
 
-
-def extract_best_sentence(
-    text: Optional[str], keyword: str, max_len: int = 300
-) -> str:
+def extract_best_sentence(text: Optional[str], keyword: str, max_len: int = 300) -> str:
     """Find the longest sentence containing a keyword."""
     if not text or not keyword:
         return ""
@@ -214,7 +191,6 @@ def extract_best_sentence(
         return ""
     best = max(matches, key=len)
     return clean_text(best)[:max_len]
-
 
 def extract_company_name(text: Optional[str]) -> str:
     """Extract first company-like name (e.g. 'Samhi Hotels Limited')."""

@@ -8,15 +8,6 @@
     "next_action_due": "",
     "updated_at": "2026-10-24T14:34:00"
   },
-  "Test": {
-    "project_name": "Test",
-    "first_seen_at": "2026-11-08T01:43:05",
-    "status": "RESEARCH_CANDIDATE",
-    "assigned_to": "",
-    "next_action": "",
-    "next_action_due": "",
-    "updated_at": null
-  },
   "Tribute Portfolio & The Westin, Whitefield": {
     "project_name": "Tribute Portfolio & The Westin, Whitefield",
     "first_seen_at": "2026-10-24T14:33:35",

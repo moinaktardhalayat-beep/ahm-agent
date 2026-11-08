@@ -63,7 +63,7 @@ if not LOCAL_MODE:
         )
 
 # ==========================================
-# SYNC API (For pull_from_db.py)
+# SYNC API
 # ==========================================
 def get_all_data_for_sync():
     if LOCAL_MODE:
@@ -105,6 +105,38 @@ def get_all_data_for_sync():
             "comments": comments,
             "manual_projects": manual_projects
         }
+
+def sync_from_payload(payload: dict) -> dict:
+    counts = {"users": 0, "network": 0, "lead_states": 0, "activities": 0, "comments": 0}
+    
+    if LOCAL_MODE:
+        if payload.get("users"): _write_json(LOCAL_USERS, {"users": payload["users"]})
+        if payload.get("network"): _write_json(LOCAL_NETWORK, payload["network"])
+        if payload.get("lead_states"): _write_json(LOCAL_LEAD_STATES, payload["lead_states"])
+        if payload.get("activities"): _write_json(LOCAL_ACTIVITIES, {"activities": payload["activities"]})
+        if payload.get("comments"): _write_json(LOCAL_COMMENTS, payload["comments"])
+        return counts
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            for u in payload.get("users", {}).values():
+                cur.execute("REPLACE INTO users (username, display_name, role, password_hash) VALUES (%s,%s,%s,%s)", (u['username'], u.get('display_name', ''), u.get('role', 'member'), u['password_hash']))
+                counts["users"] += 1
+            for cid, c in payload.get("network", {}).get("contacts", {}).items():
+                cur.execute("""REPLACE INTO network (id, name, type, firm, role_in_firm, how_they_help, location, phone, email, linkedin, website, source, relationship, status, assigned_to, linked_lead_keys, last_contacted, next_action, next_action_due, created_at, updated_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""", (cid, c.get('name',''), c.get('type','other'), c.get('firm',''), c.get('role_in_firm',''), c.get('how_they_help',''), c.get('location',''), c.get('phone',''), c.get('email',''), c.get('linkedin',''), c.get('website',''), c.get('source',''), c.get('relationship',''), c.get('status','NEW'), c.get('assigned_to',''), json.dumps(c.get('linked_lead_keys',[])), c.get('last_contacted',''), c.get('next_action',''), c.get('next_action_due',''), c.get('created_at',''), c.get('updated_at','')))
+                counts["network"] += 1
+            for pname, s in payload.get("lead_states", {}).items():
+                cur.execute("REPLACE INTO lead_states (project_name, first_seen_at, status, assigned_to, next_action, next_action_due, updated_at) VALUES (%s,%s,%s,%s,%s,%s,%s)", (pname, s.get('first_seen_at',''), s.get('status','RESEARCH_CANDIDATE'), s.get('assigned_to',''), s.get('next_action',''), s.get('next_action_due',''), s.get('updated_at','')))
+                counts["lead_states"] += 1
+            for a in payload.get("activities", []):
+                cur.execute("REPLACE INTO activities (id, target_type, target_key, method, outcome, notes, followup_date, author, date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (a.get('id'), a.get('target_type'), a.get('target_key'), a.get('method'), a.get('outcome'), a.get('notes',''), a.get('followup_date',''), a.get('author',''), a.get('date','')))
+                counts["activities"] += 1
+            cur.execute("TRUNCATE TABLE comments")
+            for key, comments in payload.get("comments", {}).items():
+                for c in comments:
+                    cur.execute("INSERT INTO comments (target_key, text, ts, author) VALUES (%s,%s,%s,%s)", (key, c.get('text',''), c.get('ts',''), c.get('author','')))
+                    counts["comments"] += 1
+    return counts
 
 # ==========================================
 # USERS

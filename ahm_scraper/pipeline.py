@@ -1,12 +1,5 @@
-"""Merge all sources, filter for quality, deduplicate, emit Phase 0 CSV.
-
-Additions vs. prior version:
-  - Quality gate before writing (drops obvious garbage)
-  - Rejected-row log (so you can see what was filtered and why)
-  - Better dedup key (name + owner, both normalized)
-  - PropContext (mcp) failures handled gracefully instead of 6-line error spam
-  - NEW: Scrapes developer websites and saves them to network.json
-"""
+"""Dynamic Multi-City Scraper Pipeline."""
+import argparse
 import csv
 import json
 import re
@@ -17,16 +10,15 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from models import ProjectRecord
-from sources.developer_sites import scrape_developer_sites
+from extract import is_target_location
+from sources.web_search import search_firms, search_projects
+from sources.google_news import fetch_news
 
 OUT = HERE / "output" / "phase0_leads.csv"
 REJECTED_LOG = HERE / "output" / "phase0_rejected.csv"
 NETWORK_FILE = HERE / "output" / "network.json"
 
-
-def _norm(s):
-    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
-
+def _norm(s): return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
 def _safe(label, fn):
     try:
@@ -37,183 +29,110 @@ def _safe(label, fn):
         print(f"[{label}] FAILED: {type(e).__name__}: {e}")
         return []
 
-
-def _from_propcontext():
+def _from_propcontext(city):
+    if city.lower() != "bengaluru": return [] # PropContext is Bengaluru specific
     try:
         from sources.propcontext_rera import search_bengaluru_projects
         projects = list(search_bengaluru_projects())
-    except Exception as e:
-        print(f"[propcontext_rera] skipped: {type(e).__name__} (mcp not available)")
+    except Exception:
         return []
     out = []
     for p in projects:
         name = (p.get("project_name") or p.get("name") or "").strip()
-        if not name:
-            continue
+        if not name: continue
+        out.append(ProjectRecord(project_name=name, location="Bengaluru", sector=p.get("project_type") or "Residential", owner_developer=p.get("promoter") or "", project_stage=p.get("status") or "", source_url="propcontext-mcp", confidence_label="Verified (RERA)"))
+    return out
+
+def _from_google_news(city):
+    out = []
+    for n in fetch_news(city=city):
         out.append(ProjectRecord(
-            project_name=name,
-            location=p.get("locality") or p.get("location") or "Bengaluru",
-            sector=p.get("project_type") or p.get("type") or "Residential",
-            owner_developer=p.get("promoter") or p.get("builder_name") or "",
-            project_stage=p.get("status") or p.get("project_status") or "",
-            stage_evidence_date=p.get("registration_date") or p.get("approved_on") or "",
-            source_url="propcontext-mcp",
-            confidence_label="Verified (RERA)",
+            project_name=n.get("title", ""), 
+            location=city.title(), 
+            sector="News signal", 
+            project_stage="Announced (unverified)", 
+            stage_evidence_date=n.get("published", ""), 
+            facade_acp_scope_evidence=n.get("summary", ""), 
+            source_url=n.get("link", ""), 
+            confidence_label="Reported (news)"
         ))
     return out
 
-
-def _from_biltrax():
-    from sources.biltrax import BILTRAX_SEEDS, scrape_biltrax_page
+def _from_web_projects(city):
     out = []
-    for url in BILTRAX_SEEDS:
-        d = scrape_biltrax_page(url)
-        if not d:
-            continue
+    for p in search_projects(city):
         out.append(ProjectRecord(
-            project_name=d.get("project_name", ""),
-            location=d.get("location", "Bengaluru"),
-            sector=d.get("sector", "Hospitality"),
-            owner_developer=d.get("owner_developer", ""),
-            architect_consultant=d.get("architect_consultant", ""),
-            project_stage=d.get("project_stage", ""),
-            stage_evidence_date=d.get("stage_evidence_date", ""),
-            total_project_value=d.get("total_project_value", ""),
-            facade_acp_scope_evidence=d.get("facade_evidence", ""),
-            source_url=d.get("source_url", url),
-            confidence_label="Verified (trade press)",
+            project_name=p["project_name"],
+            location=p["location"],
+            sector=p["sector"],
+            facade_acp_scope_evidence=p["facade_acp_scope_evidence"],
+            source_url=p["source_url"],
+            confidence_label=p["confidence_label"]
         ))
     return out
 
-
-def _from_facade_news():
-    from sources.facade_news import FACADE_SEEDS, scrape_facade_article
-    out = []
-    for url in FACADE_SEEDS:
-        d = scrape_facade_article(url)
-        if not d:
-            continue
-        out.append(ProjectRecord(
-            project_name=d.get("project_name", ""),
-            location="Bengaluru",
-            sector="Commercial",
-            project_stage="",
-            stage_evidence_date=d.get("stage_evidence_date", ""),
-            facade_acp_scope_evidence=d.get("facade_acp_scope_evidence", ""),
-            source_url=d.get("source_url", url),
-            confidence_label="Verified (trade press)",
-        ))
-    return out
-
-
-def _from_google_news():
-    from sources.google_news import fetch_news
-    out = []
-    for n in fetch_news():
-        out.append(ProjectRecord(
-            project_name=n.get("title", ""),
-            sector="News signal",
-            project_stage="Announced (unverified)",
-            stage_evidence_date=n.get("published", ""),
-            facade_acp_scope_evidence=n.get("summary", "") or n.get("title", ""),
-            source_url=n.get("link", ""),
-            confidence_label="Reported (news)",
-        ))
-    return out
-
-
-def _from_architect_sites():
-    from sources.architect_sites import SITES, scrape_site
-    out = []
-    for name, url in SITES.items():
-        try:
-            results = scrape_site(name, url)
-        except Exception as e:
-            print(f"[architect_sites] {name} failed: {e}")
-            continue
-        for r in results:
-            title = (r.get("project_titles") or "")[:150].strip()
-            if not title:
-                continue
-            out.append(ProjectRecord(
-                project_name=title,
-                architect_consultant=name,
-                facade_acp_scope_evidence=r.get("facade_keywords_found", ""),
-                source_url=url,
-                confidence_label="Inference (design page)",
-            ))
-    return out
-
-
-SOURCES = [
-    ("propcontext_rera", _from_propcontext),
-    ("biltrax", _from_biltrax),
-    ("facade_news", _from_facade_news),
-    ("google_news", _from_google_news),
-    ("architect_sites", _from_architect_sites),
-]
-
-
-def _is_usable(r: ProjectRecord):
-    """Quality gate: minimum bar for a record to appear in the CSV."""
+def _is_usable(r: ProjectRecord, city: str):
     name = (r.project_name or "").strip()
-    if len(name) < 4:
-        return False, "project_name too short"
-    if len(name) > 180:
-        return False, "project_name too long (likely scraped body)"
-    if name.count(" ") > 25:
-        return False, "project_name has >25 words"
-    if name.lower().startswith("see source"):
-        return False, "placeholder name"
-    if not r.source_url or not r.source_url.startswith("http"):
-        return False, "missing or invalid source_url"
-    return True, "ok"
-
+    if len(name) < 4: return False
+    if not is_target_location(f"{r.project_name} {r.location}", city): return False
+    if not r.source_url or not r.source_url.startswith("http"): return False
+    return True
 
 def _dedup_key(r: ProjectRecord) -> str:
-    name = _norm(r.project_name[:80])
-    owner = _norm(r.owner_developer[:40]) if r.owner_developer else ""
-    return f"{name}|{owner}"
+    return f"{_norm(r.project_name[:80])}|{_norm(r.owner_developer[:40])}"
 
-
-def run():
+def run(city: str):
+    print(f"\n--- Running Dynamic Pipeline for: {city.title()} ---")
+    
+    # 1. Fetch data dynamically
     raw = []
-    for label, fn in SOURCES:
-        raw.extend(_safe(label, fn))
+    raw.extend(_safe("propcontext_rera", lambda: _from_propcontext(city)))
+    raw.extend(_safe("google_news", lambda: _from_google_news(city)))
+    raw.extend(_safe("web_search_projects", lambda: _from_web_projects(city)))
 
-    accepted = [r for r in raw if _is_usable(r)[0]]
-    rejected = [(r, _is_usable(r)[1]) for r in raw if not _is_usable(r)[0]]
+    # 2. Filter
+    accepted = [r for r in raw if _is_usable(r, city)]
 
-    seen, unique = set(), []
+    # 3. Upsert into CSV
+    existing_rows = []
+    fieldnames = list(ProjectRecord.__annotations__)
+    seen_keys = {}
+    
+    if OUT.exists():
+        with OUT.open(encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for i, row in enumerate(reader):
+                existing_rows.append(row)
+                seen_keys[_norm(row['project_name'][:80])] = i
+
+    new_count = 0
+    update_count = 0
     for r in accepted:
-        key = _dedup_key(r)
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(r)
+        key = _norm(r.project_name[:80])
+        if key in seen_keys:
+            # Upsert: Update the existing row
+            existing_rows[seen_keys[key]] = r.to_row()
+            update_count += 1
+        else:
+            # Insert new row
+            existing_rows.append(r.to_row())
+            seen_keys[key] = len(existing_rows) - 1
+            new_count += 1
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with OUT.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(ProjectRecord.__annotations__))
+        w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
-        for r in unique:
-            w.writerow(r.to_row())
+        w.writerows(existing_rows)
 
-    with REJECTED_LOG.open("w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["reason", "project_name", "source_url"])
-        for r, reason in rejected:
-            w.writerow([reason, (r.project_name or "")[:200], r.source_url])
+    print(f"\nNew leads added:  {new_count}")
+    print(f"Existing updated: {update_count}")
+    print(f"Total in CSV:     {len(existing_rows)}")
 
-    print()
-    print(f"Raw rows:      {len(raw)}")
-    print(f"Rejected:      {len(rejected)}  (see {REJECTED_LOG.name})")
-    print(f"Duplicates:    {len(accepted) - len(unique)}")
-
-    # --- NEW: Sync Developer Contacts to Network ---
-    print("\nScraping developer websites for Network...")
+    # 4. Upsert dynamic network contacts
+    print(f"\nSearching for developers/architects in {city.title()}...")
     try:
-        new_dev_contacts = scrape_developer_sites()
+        new_dev_contacts = search_firms(city)
         if new_dev_contacts:
             if NETWORK_FILE.exists():
                 network_data = json.loads(NETWORK_FILE.read_text(encoding="utf-8"))
@@ -221,24 +140,26 @@ def run():
                 network_data = {"contacts": {}}
             
             added = 0
+            updated = 0
             for cid, contact in new_dev_contacts.items():
-                if cid not in network_data["contacts"]:
+                # Check if firm already exists by name
+                existing_id = next((k for k, v in network_data["contacts"].items() if v["name"] == contact["name"]), None)
+                if existing_id:
+                    network_data["contacts"][existing_id]["email"] = contact["email"]
+                    network_data["contacts"][existing_id]["phone"] = contact["phone"]
+                    updated += 1
+                else:
                     network_data["contacts"][cid] = contact
                     added += 1
-                else:
-                    # Update contact info if it already exists
-                    network_data["contacts"][cid]["email"] = contact["email"]
-                    network_data["contacts"][cid]["phone"] = contact["phone"]
             
             NETWORK_FILE.write_text(json.dumps(network_data, indent=2), encoding="utf-8")
-            print(f"[network] Added/Updated {added} developer contacts.")
+            print(f"[network] Added {added} new contacts, Updated {updated} existing contacts.")
     except Exception as e:
         print(f"[network] FAILED to scrape developers: {e}")
-    # ----------------------------------------------
-
-    print(f"\nWrote unique:  {len(unique)} -> {OUT}")
-    return len(unique)
-
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description="AHM Scraper Pipeline")
+    parser.add_argument("--city", default="Bengaluru", help="Target city/state (e.g. Bengaluru, Goa)")
+    args = parser.parse_args()
+    
+    run(args.city)
