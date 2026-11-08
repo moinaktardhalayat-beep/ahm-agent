@@ -5,8 +5,10 @@ Additions vs. prior version:
   - Rejected-row log (so you can see what was filtered and why)
   - Better dedup key (name + owner, both normalized)
   - PropContext (mcp) failures handled gracefully instead of 6-line error spam
+  - NEW: Scrapes developer websites and saves them to network.json
 """
 import csv
+import json
 import re
 import sys
 from pathlib import Path
@@ -15,9 +17,11 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from models import ProjectRecord
+from sources.developer_sites import scrape_developer_sites
 
 OUT = HERE / "output" / "phase0_leads.csv"
 REJECTED_LOG = HERE / "output" / "phase0_rejected.csv"
+NETWORK_FILE = HERE / "output" / "network.json"
 
 
 def _norm(s):
@@ -205,7 +209,34 @@ def run():
     print(f"Raw rows:      {len(raw)}")
     print(f"Rejected:      {len(rejected)}  (see {REJECTED_LOG.name})")
     print(f"Duplicates:    {len(accepted) - len(unique)}")
-    print(f"Wrote unique:  {len(unique)} -> {OUT}")
+
+    # --- NEW: Sync Developer Contacts to Network ---
+    print("\nScraping developer websites for Network...")
+    try:
+        new_dev_contacts = scrape_developer_sites()
+        if new_dev_contacts:
+            if NETWORK_FILE.exists():
+                network_data = json.loads(NETWORK_FILE.read_text(encoding="utf-8"))
+            else:
+                network_data = {"contacts": {}}
+            
+            added = 0
+            for cid, contact in new_dev_contacts.items():
+                if cid not in network_data["contacts"]:
+                    network_data["contacts"][cid] = contact
+                    added += 1
+                else:
+                    # Update contact info if it already exists
+                    network_data["contacts"][cid]["email"] = contact["email"]
+                    network_data["contacts"][cid]["phone"] = contact["phone"]
+            
+            NETWORK_FILE.write_text(json.dumps(network_data, indent=2), encoding="utf-8")
+            print(f"[network] Added/Updated {added} developer contacts.")
+    except Exception as e:
+        print(f"[network] FAILED to scrape developers: {e}")
+    # ----------------------------------------------
+
+    print(f"\nWrote unique:  {len(unique)} -> {OUT}")
     return len(unique)
 
 

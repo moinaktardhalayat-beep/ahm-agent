@@ -1,14 +1,38 @@
 {
-  "Tribute Portfolio & The Westin, Whitefield": {
-    "first_seen_at": "2026-10-24T14:33:35",
-    "status": "RESEARCH_CANDIDATE",
-    "assigned_to": "kartik",
-    "updated_at": "2026-10-24T14:33:35"
-  },
   "Block F2, Embassy Manyata Business Park, Bengaluru": {
+    "project_name": "Block F2, Embassy Manyata Business Park, Bengaluru",
     "first_seen_at": "2026-10-24T14:34:00",
     "status": "RESEARCH_CANDIDATE",
     "assigned_to": "saad",
+    "next_action": "",
+    "next_action_due": "",
     "updated_at": "2026-10-24T14:34:00"
+  },
+  "Test": {
+    "project_name": "Test",
+    "first_seen_at": "2026-11-08T01:43:05",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "",
+    "next_action": "",
+    "next_action_due": "",
+    "updated_at": null
+  },
+  "Tribute Portfolio & The Westin, Whitefield": {
+    "project_name": "Tribute Portfolio & The Westin, Whitefield",
+    "first_seen_at": "2026-10-24T14:33:35",
+    "status": "CONTACTED",
+    "assigned_to": "kartik",
+    "next_action": "",
+    "next_action_due": "",
+    "updated_at": "2026-11-08T01:44:05"
+  },
+  "Tribute%20Portfolio%20&%20The%20Westin,%20Whitefield": {
+    "project_name": "Tribute%20Portfolio%20&%20The%20Westin,%20Whitefield",
+    "first_seen_at": "2026-11-02T00:02:28",
+    "status": "OPPORTUNITY",
+    "assigned_to": "",
+    "next_action": "",
+    "next_action_due": "",
+    "updated_at": null
   }
 }

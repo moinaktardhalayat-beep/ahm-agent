@@ -9,62 +9,62 @@
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; margin: 0; color: #1d1d1f; font-size: 14px; }
     .topnav { background: #fff; padding: 0 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 4px; align-items: center; }
     .topnav a { padding: 14px 18px; color: #6e6e73; text-decoration: none; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; }
-    .topnav a:hover { color: #1d1d1f; }
     .topnav a.active { color: #0071e3; border-bottom-color: #0071e3; }
     .topnav .spacer { flex: 1; }
     .topnav .user { padding: 14px 12px; font-size: 13px; color: #6e6e73; }
     .topnav .user b { color: #1d1d1f; }
-    .topnav .logout { padding: 14px 18px; color: #6e6e73; font-size: 13px; text-decoration: none; }
-    .topnav .logout:hover { color: #d70015; }
-    header { background: #fff; border-bottom: 1px solid #e5e5e7; padding: 20px 32px; }
-    h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 600; }
-    .stats { display: flex; gap: 24px; margin-top: 10px; font-size: 13px; color: #6e6e73; flex-wrap: wrap; }
-    .stats b { color: #1d1d1f; font-weight: 600; }
-    .toolbar { background: #fff; padding: 12px 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    select, input[type="text"], input[type="date"] { padding: 7px 10px; border: 1px solid #d2d2d7; border-radius: 6px; background: #fff; font-size: 13px; font-family: inherit; }
-    input[type="text"] { min-width: 240px; }
-    button { padding: 7px 14px; border: none; border-radius: 6px; background: #0071e3; color: #fff; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
+    .topnav .logout { padding: 14px 18px; color: #6e6e73; text-decoration: none; }
+    header { background: #fff; border-bottom: 1px solid #e5e5e7; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
+    h1 { margin: 0; font-size: 20px; font-weight: 600; }
+    button { padding: 8px 16px; border: none; border-radius: 6px; background: #0071e3; color: #fff; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
     button:hover { background: #0063c8; }
     button.secondary { background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7; }
-    button.secondary:hover { background: #f5f5f7; }
-    main { padding: 20px 32px 60px 32px; max-width: 1400px; margin: 0 auto; }
-    .lead { background: #fff; border: 1px solid #e5e5e7; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
-    .lead:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .lead-header { padding: 16px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-    .lead-header:hover { background: #fafafa; }
-    .lead-title { flex: 1; font-weight: 500; font-size: 15px; line-height: 1.4; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
+    button.danger { background: #ffe5e5; color: #d70015; border: 1px solid #ffcccc; }
+    
+    .toolbar { background: #fff; padding: 12px 32px; border-bottom: 1px solid #e5e5e7; display: flex; gap: 16px; align-items: center; }
+    .toolbar select { padding: 6px 12px; border: 1px solid #d2d2d7; border-radius: 6px; font-family: inherit; font-size: 13px; }
+
+    main { padding: 24px 32px 60px 32px; max-width: 1400px; margin: 0 auto; }
+    .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .card { background: #fff; border: 1px solid #e5e5e7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .card-title { font-size: 16px; font-weight: 600; line-height: 1.3; margin: 0; flex: 1; padding-right: 12px; }
+    .badge { padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
     .badge.verified { background: #d1f4d8; color: #166534; }
     .badge.reported { background: #fef3c7; color: #92400e; }
     .badge.inference { background: #e5e7eb; color: #374151; }
-    .badge.sector { background: #dbeafe; color: #1e40af; text-transform: none; letter-spacing: 0; }
-    .badge.status-badge { background: #f3f4f6; color: #374151; text-transform: none; letter-spacing: 0; }
-    .badge.assigned { background: #ede9fe; color: #5b21b6; text-transform: none; letter-spacing: 0; font-size: 12px; }
-    .chevron { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.2s; color: #86868b; }
-    .lead.open .chevron { transform: rotate(90deg); }
-    .lead-body { display: none; border-top: 1px solid #e5e5e7; }
-    .lead.open .lead-body { display: block; }
-    /* FIX: minmax(0, 1fr) stops long text from breaking the layout */
-    .body-inner { padding: 20px 24px; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; }
-    @media (max-width: 900px) { .body-inner { grid-template-columns: 1fr; } }
-    .field-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-    /* FIX: word-break forces wrapping instead of stretching */
-    .field-table td { padding: 6px 0; border-bottom: 1px solid #f0f0f0; vertical-align: top; word-break: break-word; overflow-wrap: anywhere; }
-    .field-table td:first-child { width: 190px; color: #6e6e73; font-weight: 500; padding-right: 16px; }
-    .field-table td.empty { color: #c7c7cc; font-style: italic; }
-    a { color: #0071e3; text-decoration: none; word-break: break-all; }
-    a:hover { text-decoration: underline; }
-    .right-col h3 { margin: 0 0 10px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6e6e73; letter-spacing: 0.5px; }
-    .right-col h3:not(:first-child) { margin-top: 20px; }
-    .status-form select, .status-form input { width: 100%; margin-bottom: 8px; }
-    textarea { width: 100%; min-height: 60px; padding: 8px; border: 1px solid #d2d2d7; border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical; }
-    .comment, .activity { background: #fff; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #e5e5e7; }
-    .comment .meta, .activity .meta { font-size: 11px; color: #86868b; margin-bottom: 4px; }
-    .empty-note { font-size: 13px; color: #86868b; padding: 8px 0; font-style: italic; }
-    .list-scroll { max-height: 240px; overflow-y: auto; }
-    .empty-state { text-align: center; padding: 60px 20px; color: #86868b; background: #fff; border-radius: 10px; }
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #1d1d1f; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 100; }
-    .toast.show { opacity: 1; transform: translateY(0); }
+    
+    .card-details { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #6e6e73; margin-bottom: 16px; flex: 1; }
+    .card-details div { display: flex; justify-content: space-between; }
+    .card-details span { color: #1d1d1f; font-weight: 500; text-align: right; }
+    
+    .card-activity { background: #f9f9fb; border-radius: 6px; padding: 10px; font-size: 12px; margin-bottom: 16px; border-left: 3px solid #0071e3; }
+    .card-activity strong { color: #1d1d1f; display: block; margin-bottom: 2px; }
+    
+    .card-actions { display: flex; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+    .card-actions button { flex: 1; padding: 6px; font-size: 12px; }
+    
+    .edit-input { width: 100%; padding: 6px; border: 1px solid #d2d2d7; border-radius: 4px; font-size: 13px; font-family: inherit; margin-bottom: 8px; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+    .pagination button { background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7; }
+    .pagination button.active { background: #0071e3; color: #fff; border-color: #0071e3; }
+    
+    .modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.4); }
+    .modal.open { display: flex; }
+    .modal-content { background: #fff; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-content h2 { margin: 0 0 16px 0; font-size: 18px; }
+    .modal-content label { display: block; font-size: 12px; color: #6e6e73; margin: 10px 0 4px 0; font-weight: 500; }
+    .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 8px; border: 1px solid #d2d2d7; border-radius: 6px; font-family: inherit; font-size: 13px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+    @media (max-width: 768px) {
+      .topnav { flex-wrap: wrap; justify-content: center; padding: 10px; }
+      header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .toolbar { flex-wrap: wrap; padding: 12px 16px; }
+      main { padding: 16px; }
+      .grid-container { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -79,174 +79,256 @@
 
   <header>
     <h1>Projects</h1>
-    <div class="stats">
-      <span><b>{{ total }}</b> projects</span>
-      <span><b>{{ verified }}</b> verified</span>
-      <span><b>{{ reported }}</b> reported</span>
-      {% if is_admin %}<span><a href="/download/csv">Download CSV</a></span>{% endif %}
-    </div>
+    {% if is_admin %}<button onclick="openAddModal()">+ Add Project</button>{% endif %}
   </header>
 
   <div class="toolbar">
-    <select id="filter-confidence">
-      <option value="">All confidence</option><option>Verified</option><option>Reported</option><option>Inference</option>
-    </select>
-    <select id="filter-sector">
-      <option value="">All sectors</option><option>Hospitality</option><option>Commercial</option><option>News signal</option>
-    </select>
-    <select id="sort-by">
-      <option value="">Sort by...</option>
+    <label style="font-size:13px; font-weight:500;">Sort by:</label>
+    <select id="sort-select" onchange="sortCards(this.value)">
+      <option value="default">Default (Newest)</option>
       <option value="status">Status</option>
-      <option value="assignee">Sales Rep</option>
+      <option value="assignee">Assignee</option>
     </select>
-    <input type="text" id="search" placeholder="Search project, owner, consultant...">
-    <button class="secondary" onclick="toggleAll()">Expand all</button>
-    <button onclick="location.reload()">Refresh</button>
   </div>
 
-  <main id="leads">
-    {% if csv_missing %}
-      <div class="empty-state"><p>No <code>phase0_leads.csv</code> found yet.</p></div>
-    {% elif leads %}
+  <main>
+    <div class="grid-container" id="card-grid">
       {% for lead in leads %}
-      <div class="lead" data-key="{{ lead._key }}" data-confidence="{{ lead.confidence_label }}" data-sector="{{ lead.sector }}" data-status="{{ lead._status }}" data-assignee="{{ lead._assigned_to }}">
-        <div class="lead-header" onclick="toggleLead(this)">
-          <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path d="M7 5l6 5-6 5V5z"/></svg>
-          <div class="lead-title">{{ lead.project_name }}</div>
-          <span class="badge status-badge">{{ lead._status }}</span>
-          {% if 'Verified' in lead.confidence_label %}<span class="badge verified">Verified</span>
-          {% elif 'Reported' in lead.confidence_label %}<span class="badge reported">Reported</span>
-          {% else %}<span class="badge inference">Inference</span>{% endif %}
-          {% if lead.sector and lead.sector != 'News signal' %}<span class="badge sector">{{ lead.sector }}</span>{% endif %}
-          {% if lead._assigned_to %}<span class="badge assigned">👤 {{ lead._assigned_to }}</span>{% endif %}
+      <div class="card" data-key="{{ lead.project_name }}" data-index="{{ loop.index0 }}" data-status="{{ lead._status }}" data-assignee="{{ lead._assigned_to or 'zzz' }}">
+        <!-- VIEW MODE -->
+        <div id="view-{{ loop.index0 }}" class="view-mode">
+          <div class="card-header">
+            <h3 class="card-title">{{ lead.project_name }}</h3>
+            <span class="badge {% if 'Verified' in lead.confidence_label %}verified{% elif 'Reported' in lead.confidence_label %}reported{% else %}inference{% endif %}">
+              {{ lead.confidence_label.split(' ')[0] }}
+            </span>
+          </div>
+          
+          <div class="card-details">
+            <div>Stage <span>{{ lead.project_stage or 'Unknown' }}</span></div>
+            <div>Contact <span>{{ lead.contact_details_source or 'None' }}</span></div>
+            <div>Assigned <span>{{ lead._assigned_to or 'Unassigned' }}</span></div>
+            <div>Status <span style="font-weight:600; color:#0071e3;">{{ lead._status }}</span></div>
+            <div style="font-size:11px; margin-top:8px; color:#a1a1a6;">Updated: {{ lead._updated_at[:10] if lead._updated_at else 'Never' }}</div>
+          </div>
+
+          {% if lead._latest_activity %}
+          <div class="card-activity">
+            <strong>{{ lead._latest_activity.method|title }} - {{ lead._latest_activity.outcome|replace('_',' ')|title }}</strong>
+            {{ lead._latest_activity.date[:10] }} {% if lead._latest_activity.author %}by {{ lead._latest_activity.author }}{% endif %}
+          </div>
+          {% else %}
+          <div class="card-activity" style="border-left-color:#d2d2d7; color:#86868b;">No recent activity</div>
+          {% endif %}
+
+          <div class="card-actions">
+            <button class="secondary" onclick="toggleEdit('{{ loop.index0 }}')">Edit</button>
+            <button onclick="openActivityModal('{{ lead.project_name }}')">Log Activity</button>
+          </div>
         </div>
-        <div class="lead-body">
-          <div class="body-inner">
-            <div>
-              <table class="field-table">
-                {% for field, value in lead.items() if not field.startswith('_') and field != 'project_name' %}
-                <tr>
-                  <td>{{ field.replace('_', ' ').title() }}</td>
-                  {% if field == 'source_url' and value %}<td><a href="{{ value }}" target="_blank">{{ value[:80] }}...</a></td>
-                  {% elif value and value != 'UNKNOWN' %}<td>{{ value }}</td>
-                  {% else %}<td class="empty">{{ value or 'unknown' }}</td>{% endif %}
-                </tr>
-                {% endfor %}
-              </table>
-            </div>
-            <div class="right-col">
-              {% if is_admin %}
-              <h3>Assign to</h3>
-              <div class="status-form">
-                <select id="assign-{{ loop.index }}">
-                  <option value="">— Unassigned —</option>
-                  {% for u in users_list %}
-                  <option value="{{ u.username }}" {% if u.username == lead._assigned_to %}selected{% endif %}>{{ u.display_name }} ({{ u.username }})</option>
-                  {% endfor %}
-                </select>
-                <button class="secondary" onclick="saveAssign({{ loop.index }}, '{{ lead._key|e }}')">Save assignment</button>
-              </div>
-              {% endif %}
 
-              <h3>Status & next action</h3>
-              <div class="status-form">
-                <select id="status-{{ loop.index }}" onchange="setStatus('{{ lead._key|e }}', this.value)">
-                  {% for s in lead_statuses %}<option {% if s == lead._status %}selected{% endif %}>{{ s }}</option>{% endfor %}
-                </select>
-                <input type="text" id="next-action-{{ loop.index }}" placeholder="Next action" value="{{ lead._next_action }}">
-                <input type="date" id="next-due-{{ loop.index }}" value="{{ lead._next_action_due }}">
-                <button class="secondary" onclick="saveNextAction({{ loop.index }}, '{{ lead._key|e }}')">Save</button>
-              </div>
+        <!-- EDIT MODE -->
+        <div id="edit-{{ loop.index0 }}" class="edit-mode" style="display:none;">
+          <h3 style="margin:0 0 12px 0; font-size:14px;">Edit Details</h3>
+          <label>Project Name (Read-only)</label>
+          <input class="edit-input" id="edit-name-{{ loop.index0 }}" value="{{ lead.project_name }}" readonly style="background:#f5f5f7; color:#86868b;">
+          
+          <label>Stage</label>
+          <input class="edit-input" id="edit-stage-{{ loop.index0 }}" value="{{ lead.project_stage }}">
+          
+          <label>Contact Source</label>
+          <input class="edit-input" id="edit-contact-{{ loop.index0 }}" value="{{ lead.contact_details_source }}">
+          
+          <label>Status</label>
+          <select class="edit-input" id="edit-status-{{ loop.index0 }}">
+            {% for s in lead_statuses %}<option {% if s == lead._status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+          </select>
 
-              <h3>Log activity</h3>
-              <div class="status-form">
-                <select id="method-{{ loop.index }}">{% for m in activity_methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}</select>
-                <select id="outcome-{{ loop.index }}">{% for o in activity_outcomes %}<option value="{{ o }}">{{ o.replace('_',' ') }}</option>{% endfor %}</select>
-                <textarea id="notes-{{ loop.index }}" placeholder="Notes..."></textarea>
-                <button onclick="logActivity({{ loop.index }}, '{{ lead._key|e }}')">Log</button>
-              </div>
+          {% if is_admin %}
+          <label>Assigned To</label>
+          <select class="edit-input" id="edit-assign-{{ loop.index0 }}">
+            <option value="">Unassigned</option>
+            {% for u in users_list %}<option value="{{ u.username }}" {% if u.username == lead._assigned_to %}selected{% endif %}>{{ u.display_name }}</option>{% endfor %}
+          </select>
+          {% endif %}
 
-              <h3>Activity ({{ lead._activities|length }})</h3>
-              <div class="list-scroll">
-                {% if lead._activities %}{% for a in lead._activities %}
-                  <div class="activity"><div class="meta">{{ a.method }} → {{ a.outcome.replace('_',' ') }} · {{ a.date }}{% if a.author %} · {{ a.author }}{% endif %}</div>{% if a.notes %}{{ a.notes }}{% endif %}</div>
-                {% endfor %}{% else %}<div class="empty-note">No activity yet</div>{% endif %}
-              </div>
-
-              <h3>Comments</h3>
-              <div class="list-scroll">
-                {% if lead._comments %}{% for c in lead._comments %}
-                  <div class="comment"><div class="meta">{{ c.author }} · {{ c.ts }}</div>{{ c.text }}</div>
-                {% endfor %}{% else %}<div class="empty-note">No comments yet</div>{% endif %}
-              </div>
-              <textarea id="comment-{{ loop.index }}" placeholder="Add a note..."></textarea>
-              <button onclick="addComment({{ loop.index }}, '{{ lead._key|e }}')">Save comment</button>
-            </div>
+          <div class="card-actions" style="margin-top:16px;">
+            {% if is_admin %}
+            <button class="danger" onclick="deleteCard('{{ lead.project_name }}', 'lead')">Delete</button>
+            {% endif %}
+            <button class="secondary" onclick="toggleEdit('{{ loop.index0 }}')">Cancel</button>
+            <button onclick="saveCard('{{ loop.index0 }}', '{{ lead.project_name }}')">Save Changes</button>
           </div>
         </div>
       </div>
       {% endfor %}
-    {% else %}
-      <div class="empty-state"><p>No projects visible to you.</p>{% if not is_admin %}<p>Contact the admin to have projects assigned to you.</p>{% endif %}</div>
-    {% endif %}
+    </div>
+    <div class="pagination" id="pagination"></div>
   </main>
 
-  <div class="toast" id="toast"></div>
+  <!-- ADD PROJECT MODAL -->
+  <div class="modal" id="add-modal">
+    <div class="modal-content">
+      <h2>Add New Project</h2>
+      <label>Project Name *</label>
+      <input type="text" id="add-name" required>
+      <label>Location</label>
+      <input type="text" id="add-location" value="Bengaluru">
+      <label>Owner / Developer</label>
+      <input type="text" id="add-owner">
+      <label>Stage</label>
+      <input type="text" id="add-stage" placeholder="e.g. Pre-Construction">
+      <label>Contact Details</label>
+      <input type="text" id="add-contact" placeholder="Phone, Email, etc.">
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeAddModal()">Cancel</button>
+        <button onclick="submitNewProject()">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY MODAL -->
+  <div class="modal" id="activity-modal">
+    <div class="modal-content">
+      <h2>Log Activity</h2>
+      <input type="hidden" id="act-target">
+      <label>Method</label>
+      <select id="act-method">
+        {% for m in activity_methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+      </select>
+      <label>Outcome</label>
+      <select id="act-outcome">
+        {% for o in activity_outcomes %}<option value="{{ o }}">{{ o.replace('_',' ') }}</option>{% endfor %}
+      </select>
+      <label>Notes</label>
+      <textarea id="act-notes" rows="3"></textarea>
+      <label>Follow-up Date</label>
+      <input type="date" id="act-followup">
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeActivityModal()">Cancel</button>
+        <button onclick="submitActivity()">Log Activity</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    function toggleLead(h) { h.parentElement.classList.toggle('open'); }
-    let allOpen = false;
-    function toggleAll() { allOpen = !allOpen; document.querySelectorAll('.lead').forEach(el => el.classList.toggle('open', allOpen)); }
-    function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
-    
-    function filterLeads() {
-      const c = document.getElementById('filter-confidence').value.toLowerCase(), s = document.getElementById('filter-sector').value.toLowerCase(), q = document.getElementById('search').value.toLowerCase();
-      document.querySelectorAll('.lead').forEach(el => {
-        const ok = (!c || el.dataset.confidence.toLowerCase().includes(c)) && (!s || el.dataset.sector.toLowerCase() === s) && (!q || el.textContent.toLowerCase().includes(q));
-        el.style.display = ok ? '' : 'none';
+    let allCards = Array.from(document.querySelectorAll('.card'));
+    const perPage = 10;
+    let currentPage = 1;
+    let totalPages = Math.ceil(allCards.length / perPage);
+
+    function renderPage(page) {
+      currentPage = page;
+      allCards.forEach((card, i) => {
+        card.style.display = (i >= (page - 1) * perPage && i < page * perPage) ? 'flex' : 'none';
       });
-    }
-
-    function sortLeads() {
-      const sortBy = document.getElementById('sort-by').value;
-      if (!sortBy) return;
-      const container = document.getElementById('leads');
-      const items = Array.from(container.querySelectorAll('.lead'));
-
-      items.sort((a, b) => {
-        if (sortBy === 'status') {
-          return a.dataset.status.localeCompare(b.dataset.status);
-        } else if (sortBy === 'assignee') {
-          const valA = a.dataset.assignee || 'zzz';
-          const valB = b.dataset.assignee || 'zzz';
-          return valA.localeCompare(valB);
+      let html = '';
+      if (totalPages > 1) {
+        html += `<button onclick="renderPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          html += `<button class="${i === currentPage ? 'active' : ''}" onclick="renderPage(${i})">${i}</button>`;
         }
-        return 0;
+        html += `<button onclick="renderPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+      }
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    function sortCards(sortBy) {
+      const grid = document.getElementById('card-grid');
+      if (sortBy === 'default') {
+        allCards.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
+      } else if (sortBy === 'status') {
+        allCards.sort((a, b) => a.dataset.status.localeCompare(b.dataset.status));
+      } else if (sortBy === 'assignee') {
+        allCards.sort((a, b) => a.dataset.assignee.localeCompare(b.dataset.assignee));
+      }
+      grid.innerHTML = '';
+      allCards.forEach(c => grid.appendChild(c));
+      renderPage(1);
+    }
+
+    renderPage(1);
+
+    function toggleEdit(idx) {
+      const view = document.getElementById('view-' + idx);
+      const edit = document.getElementById('edit-' + idx);
+      if (edit.style.display === 'none') {
+        view.style.display = 'none';
+        edit.style.display = 'block';
+      } else {
+        view.style.display = 'block';
+        edit.style.display = 'none';
+      }
+    }
+
+    async function saveCard(idx, projectName) {
+      const body = {
+        project_stage: document.getElementById('edit-stage-' + idx).value,
+        contact_details_source: document.getElementById('edit-contact-' + idx).value,
+        status: document.getElementById('edit-status-' + idx).value,
+      };
+      const assignEl = document.getElementById('edit-assign-' + idx);
+      if (assignEl) body.assigned_to = assignEl.value;
+
+      const r = await fetch('/api/lead/' + encodeURIComponent(projectName) + '/edit', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
       });
-
-      items.forEach(item => container.appendChild(item));
+      if (r.ok) location.reload();
+      else alert('Failed to save');
     }
 
-    ['filter-confidence','filter-sector'].forEach(id => document.getElementById(id).addEventListener('change', filterLeads));
-    document.getElementById('search').addEventListener('input', filterLeads);
-    document.getElementById('sort-by').addEventListener('change', sortLeads);
+    async function deleteCard(key, type) {
+      if (!confirm('Are you sure you want to delete this? This cannot be undone.')) return;
+      const url = type === 'lead' ? '/api/lead/' + encodeURIComponent(key) : '/api/network/' + key;
+      const r = await fetch(url, { method: 'DELETE' });
+      if (r.ok) location.reload();
+      else alert('Failed to delete');
+    }
 
-    async function setStatus(key, status) { if((await fetch('/api/lead/' + encodeURIComponent(key) + '/status', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status})})).ok) { showToast('Status saved'); setTimeout(() => location.reload(), 300); } }
-    async function saveNextAction(idx, key) {
-      const body = {next_action: document.getElementById('next-action-'+idx).value, next_action_due: document.getElementById('next-due-'+idx).value};
-      if((await fetch('/api/lead/' + encodeURIComponent(key) + '/next-action', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})).ok) showToast('Saved');
+    // ACTIVITY MODAL
+    function openActivityModal(key) {
+      document.getElementById('act-target').value = key;
+      document.getElementById('activity-modal').classList.add('open');
     }
-    async function saveAssign(idx, key) {
-      const assigned_to = document.getElementById('assign-'+idx).value;
-      if((await fetch('/api/lead/' + encodeURIComponent(key) + '/assign', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({assigned_to})})).ok) { showToast('Assigned'); setTimeout(() => location.reload(), 300); }
+    function closeActivityModal() {
+      document.getElementById('activity-modal').classList.remove('open');
     }
-    async function logActivity(idx, key) {
-      const body = {target_type:'lead', target_key:key, method: document.getElementById('method-'+idx).value, outcome: document.getElementById('outcome-'+idx).value, notes: document.getElementById('notes-'+idx).value};
-      if((await fetch('/api/activity', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})).ok) { showToast('Activity logged'); setTimeout(() => location.reload(), 400); }
+    async function submitActivity() {
+      const key = document.getElementById('act-target').value;
+      const body = {
+        target_type: 'lead', target_key: key,
+        method: document.getElementById('act-method').value,
+        outcome: document.getElementById('act-outcome').value,
+        notes: document.getElementById('act-notes').value,
+        followup_date: document.getElementById('act-followup').value
+      };
+      const r = await fetch('/api/activity', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (r.ok) location.reload();
+      else alert('Failed to log activity');
     }
-    async function addComment(idx, key) {
-      const text = document.getElementById('comment-'+idx).value.trim();
-      if (!text) return;
-      if((await fetch('/api/lead/' + encodeURIComponent(key) + '/comment', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text})})).ok) { showToast('Comment saved'); setTimeout(() => location.reload(), 400); }
+
+    // ADD PROJECT MODAL
+    function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
+    function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+    async function submitNewProject() {
+      const body = {
+        project_name: document.getElementById('add-name').value,
+        location: document.getElementById('add-location').value,
+        owner_developer: document.getElementById('add-owner').value,
+        project_stage: document.getElementById('add-stage').value,
+        contact_details_source: document.getElementById('add-contact').value,
+        confidence_label: "Manual Entry",
+        status: "RESEARCH_CANDIDATE"
+      };
+      if (!body.project_name) return alert('Project Name required');
+      
+      const r = await fetch('/api/lead', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (r.ok) {
+        location.reload();
+      } else {
+        const err = await r.text();
+        alert('Failed to add project:\n' + err);
+      }
     }
   </script>
 </body>

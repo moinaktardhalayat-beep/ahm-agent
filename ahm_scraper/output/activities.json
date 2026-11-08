@@ -1,6 +1,136 @@
 {
   "activities": [
     {
+      "id": "act-079b3220",
+      "target_type": "lead",
+      "target_key": "Tribute Portfolio & The Westin, Whitefield",
+      "method": "whatsapp",
+      "outcome": "other",
+      "notes": "sent whats app, call back on monday",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-08T01:44:05",
+      "followup_date": ""
+    },
+    {
+      "id": "act-933fb0c9",
+      "target_type": "network",
+      "target_key": "net-embassy",
+      "method": "call",
+      "outcome": "no_answer",
+      "notes": "Not picking call",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-03T22:18:18",
+      "followup_date": ""
+    },
+    {
+      "id": "act-dc214a3b",
+      "target_type": "network",
+      "target_key": "net-dev-vaishnavigroup",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "Asked to call at 3 pm",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-03T01:04:45",
+      "followup_date": ""
+    },
+    {
+      "id": "act-be02ab32",
+      "target_type": "network",
+      "target_key": "net-kalyani-hilton",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "Asked us to send email with all details",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-02T04:09:53",
+      "followup_date": ""
+    },
+    {
+      "id": "act-3931d5be",
+      "target_type": "network",
+      "target_key": "net-metaspace",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "Sent an email, and they will get back to us.",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-02T01:02:35",
+      "followup_date": ""
+    },
+    {
+      "id": "act-62733ddc",
+      "target_type": "network",
+      "target_key": "net-kalyani-hilton",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "asked me to call after lunch hours.",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-02T01:00:15",
+      "followup_date": ""
+    },
+    {
+      "id": "act-2f227bf0",
+      "target_type": "network",
+      "target_key": "net-ihcl-gateway",
+      "method": "call",
+      "outcome": "no_answer",
+      "notes": "dint pickup",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-02T00:47:50",
+      "followup_date": ""
+    },
+    {
+      "id": "act-56812e27",
+      "target_type": "network",
+      "target_key": "net-palladium",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "asked to call tomorrow.",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-02T00:40:24",
+      "followup_date": ""
+    },
+    {
+      "id": "act-a6bf7548",
+      "target_type": "network",
+      "target_key": "net-2c5b82b6",
+      "method": "call",
+      "outcome": "other",
+      "notes": "instructed to visit headoffice in indira nagar, anytime",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Saad",
+      "date": "2026-11-01T23:48:20",
+      "followup_date": ""
+    },
+    {
+      "id": "act-2bc01ce7",
+      "target_type": "network",
+      "target_key": "net-dev-adarshdeveloper",
+      "method": "call",
+      "outcome": "replied",
+      "notes": "did a call, they are asking for a call on monday 2-Oct-2026",
+      "next_action": "",
+      "next_action_due": "",
+      "author": "Moin",
+      "date": "2026-11-01T02:23:11",
+      "followup_date": ""
+    },
+    {
       "id": "act-6bf201b7",
       "target_type": "network",
       "target_key": "net-palladium",
@@ -9,7 +139,9 @@
       "notes": "asking for a call on wed",
       "next_action": "",
       "next_action_due": "",
-      "date": "2026-10-19T21:01:37"
+      "author": "",
+      "date": "2026-10-19T21:01:37",
+      "followup_date": ""
     }
   ]
 }
