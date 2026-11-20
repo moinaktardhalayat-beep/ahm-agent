@@ -2,12 +2,8 @@
 import json
 import requests
 import urllib3
-import csv
-import io
-import sys
 from pathlib import Path
 
-# Suppress the self-signed certificate warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 BASE_DIR = Path(__file__).parent
@@ -24,20 +20,13 @@ def load_json(path, default):
 
 def sync():
     print("Gathering local data...")
-    
-    # Read CSV safely
-    csv_path = OUTPUT_DIR / "phase0_leads.csv"
-    csv_content = ""
-    if csv_path.exists():
-        csv_content = csv_path.read_text(encoding="utf-8")
-    
     payload = {
-        "leads_csv": csv_content,
+        "projects": load_json(OUTPUT_DIR / "projects.json", []),
         "users": load_json(DASHBOARD_DIR / "users.json", {}).get("users", {}),
         "network": load_json(OUTPUT_DIR / "network.json", {"contacts": {}}),
-        "lead_states": load_json(OUTPUT_DIR / "lead_states.json", {}),
         "activities": load_json(OUTPUT_DIR / "activities.json", {"activities": []}).get("activities", []),
-        "comments": load_json(OUTPUT_DIR / "comments.json", {})
+        "comments": load_json(OUTPUT_DIR / "comments.json", {}),
+        "tasks": load_json(OUTPUT_DIR / "tasks.json", {"tasks": []}),
     }
 
     print("Pushing to GoDaddy over HTTPS...")

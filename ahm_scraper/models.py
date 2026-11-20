@@ -29,6 +29,7 @@ class ProjectRecord:
     confidence_label: str = "Inference"
     lead_stage: str = "Research candidate"
     source_url: str = ""
+    website_url: str = ""
     scraped_at: str = field(default_factory=lambda: date.today().isoformat())
 
     def to_row(self):

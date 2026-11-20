@@ -1,29 +1,287 @@
 {
-  "Block F2, Embassy Manyata Business Park, Bengaluru": {
-    "project_name": "Block F2, Embassy Manyata Business Park, Bengaluru",
-    "first_seen_at": "2026-10-24T14:34:00",
+  "Brigade Group, Hyatt mull two new hotels in Bengaluru - Construction Week India": {
+    "first_seen_at": "2026-01-01",
     "status": "RESEARCH_CANDIDATE",
-    "assigned_to": "saad",
-    "next_action": "",
-    "next_action_due": "",
-    "updated_at": "2026-10-24T14:34:00"
+    "assigned_to": "moin"
   },
-  "Tribute Portfolio & The Westin, Whitefield": {
-    "project_name": "Tribute Portfolio & The Westin, Whitefield",
-    "first_seen_at": "2026-10-24T14:33:35",
-    "status": "CONTACTED",
-    "assigned_to": "kartik",
-    "next_action": "",
-    "next_action_due": "",
-    "updated_at": "2026-11-08T01:44:05"
+  "Westin Hotel and Tribute Portfolio, Bengaluru, India - e-architect": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
   },
-  "Tribute%20Portfolio%20&%20The%20Westin,%20Whitefield": {
-    "project_name": "Tribute%20Portfolio%20&%20The%20Westin,%20Whitefield",
-    "first_seen_at": "2026-11-02T00:02:28",
-    "status": "OPPORTUNITY",
-    "assigned_to": "",
-    "next_action": "",
-    "next_action_due": "",
-    "updated_at": null
+  "Kalyani Developers targets 1,400-plus hotel keys across Bengaluru and Hyderabad - Hotelier India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Hyatt and Brigade Group Announce Plans for Two New Hyatt Regency Hotels in Bengaluru - Hotel Online": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Kalyani Developers Partners with Hilton for 600-Key Dual-Brand Hotel Project in Bengaluru - https://safariindia.com/": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Shree Naman Group acquires JW Marriott Bengaluru, Crowne Plaza Pune for \u20b91,800 crore - ET Realty": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Video | Explosion In Under-Construction Bengaluru Building, Cops Suspect IED Used - NDTV": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Kalyani Developers targets 1,400+ keys across Hyderabad & Bengaluru in 2 years - Travel Trends Today": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Brigade Enterprises partners with Hyatt to add 600 hotel rooms across two Bengaluru properties - Prop News Time": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Brigade Group, Hyatt sign deals for two Bengaluru hotels with 600 rooms - Business Standard": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "The Den Bengaluru joins Hilton\u2019s LXR Hotels & Resorts luxury portfolio - Hotelier India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Brigade Group and Hyatt announce plans for two new Hyatt Regency hotels in Bengaluru - ET HospitalityWorld": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Brigade Enterprises signs Hyatt Hotels to manage two hotels in Bengaluru - The Economic Times": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Kalyani Developers targets 1,425 hotel keys across Bengaluru and Hyderabad - Prop News Time": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "DivyaSree launches Rs 8 billion residential project in Bengaluru - megaproject.com": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Awfis Space launches new centres in Pune, Mumbai, and Bengaluru - BigInfo.in": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "2 foreign nationals die in Bengaluru hotel pool: Airline crew member, tech manager suffer electric shock - Bhaskar English": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Century Real Estate unveils The Astoria in Bengaluru - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "\u201cA natural fit\u201d: Vinesh Gupta on The Den Bengaluru\u2019s move to Hilton\u2019s LXR - ET HospitalityWorld": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Hyatt signs agreements for two new Bengaluru hotels with Brigade Group, adding 600 rooms - Hotelier India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Mana Skanda unveils \u20b93,657-cr Beach Province in Bengaluru - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Inside The Den Bengaluru, LXR Hotels & Resorts: Finding a moment of calm in the city's busiest... - Moneycontrol.com": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Shree Naman Group acquires JW Marriott Bengaluru, Crowne Plaza Pune - Construction World": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "DivyaSree Quiet Side takes shape in North Bengaluru - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Land disputes stall Bengaluru Business Corridor as construction inches forward - Bangalore Mirror": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "L&T Construction Orders Cover Mumbai, Bengaluru, Hyderabad - Urban Acres": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Bhartiya Urban, Alpine to Invest Rs. 10 bn in Bengaluru Project - megaproject.com": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Bengaluru Leads India\u2019s Occupied Office Stock at 227.9 mn Sq Ft - Construction World": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "VK Excellence & Honor: Shree Constructions: Building Trust & Creating Dreams - Bangalore Mirror": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Rohan Corporation makes Bengaluru foray - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Bhartiya Urban to Invest Over Rs 10 Billion in Bengaluru Project - megaproject.com": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Bagmane says job cuts have not reduced Bengaluru office demand - Multibagg AI": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Two people injured in explosion at under-construction building in Bengaluru - The Indian Express": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "2 injured in explosion at under-construction building in Bengaluru - The Times of India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "IBM India leases 2.83 lakh sq ft of office space in Bengaluru for \u20b9343 crore over 10 years | Real Estate News - Hindustan Times": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Explosion In Under-Construction Bengaluru Building, Cops Suspect IED Used - NDTV": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Why Neighbourhoods, Not Towers, Will Shape Bengaluru\u2019s Future - Realty Plus Magazine": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "L&T Construction Orders Span Mumbai, Bengaluru, Hyderabad - Urban Acres": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Brigade and Hyatt Plan Two Hotels With 600 Rooms in Bengaluru - Asian Hospitality": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Two Hyatt Regency Hotels Planned in Bengaluru, India - Hotel News Resource": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Shree Naman Group completes acquisition of JW Marriott Bengaluru and Crowne Plaza Pune - ET HospitalityWorld": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Bhartiya Urban, Alpine to invest worth 1,000 INR-Crore in Nikoo Homes 9, Bengaluru - Biltrax Media": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Who Is Bengaluru Actually Being Built For? - ArchitectureLive!": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Two injured in explosion at construction site in Bengaluru's Pulakeshinagar - The New Indian Express": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "Mahindra Lifespaces to Develop North Bengaluru Project - Construction World": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Mahindra Lifespaces to develop 10.05-acre North Bengaluru project - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "moin"
+  },
+  "Assetz, Fairlark partner to develop 10-acre residential project in North Bengaluru - Construction Week India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "saad"
+  },
+  "IBM India Leases 283,000 Sq Ft in Bengaluru for Rs. 3.43 bn - Construction World": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kartik"
+  },
+  "Tree of Life Amoravida Opens Its Doors In North Goa - Hotel Online": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "Mopa airport plans sought before project ECs' review - The Goan": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "Spark by Hilton Launches in India with Bengaluru and Goa Hotels - https://safariindia.com/": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "Maverick & Farmer launches Jaggeries of India coffee menu across Bengaluru and Goa - Hotelier India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "In this filmmaker\u2019s Goa home, the wildlife murals took 1,200 man-hours of painting - Architectural Digest India": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "Goa signs Rs 5,000 crore MoU with Dubai-based ANVI to build state's first LPG import and storage terminal - Moneycontrol.com": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "In Goa, developers are grabbing eco-sensitive hilly land \u2013 \u2018legally\u2019 - Scroll.in": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "Kamaxi Group: Building Skills, Creating Opportunities and Shaping Global Careers - ItsGoa": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
+  },
+  "ANVI signs \u20b95,000-crore MoU with Goa for LPG terminal at Goa\u2019s Mormugao Port - ET Infra": {
+    "first_seen_at": "2026-01-01",
+    "status": "RESEARCH_CANDIDATE",
+    "assigned_to": "kaif"
   }
 }

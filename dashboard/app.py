@@ -19,6 +19,20 @@ app = FastAPI(title="AHM Pipeline Dashboard")
 SESSION_SECRET = os.environ.get("AHM_SESSION_SECRET", "dev-only-change-me-in-production")
 SYNC_SECRET = "ahm-secret-sync-123"
 
+from datetime import datetime as _dt_filter
+
+def _fmt_date(value):
+    """Format ISO date (YYYY-MM-DD or datetime) as DD-MMM-YYYY."""
+    if not value:
+        return ""
+    s = str(value)[:10]
+    try:
+        return _dt_filter.strptime(s, "%Y-%m-%d").strftime("%d-%b-%Y")
+    except Exception:
+        return s
+
+TEMPLATES.env.filters["fmt_date"] = _fmt_date
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     return PlainTextResponse(traceback.format_exc(), status_code=500)
@@ -26,7 +40,6 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
     path = request.url.path
-    # Allow login, logout, and API sync endpoints without an active user session
     if path in ("/login", "/logout", "/api/sync", "/api/pull_all") or path.startswith("/static"):
         return await call_next(request)
     
@@ -79,31 +92,32 @@ async def create_lead(request: Request):
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-@app.post("/api/lead/{project_name:path}/edit")
-async def edit_lead(project_name: str, request: Request):
+# --- FIXED: Using JSON body instead of URL path ---
+@app.post("/api/lead/edit")
+async def edit_lead(request: Request):
     user = request.state.user
     body = await request.json()
     if not auth.is_admin(user) and "assigned_to" in body: 
         del body["assigned_to"]
+    
+    project_name = body.get("project_name", "")
     data.update_full_lead(project_name, body)
     return {"ok": True}
 
-@app.delete("/api/lead/{project_name:path}")
-async def delete_lead(project_name: str, request: Request):
+@app.post("/api/lead/delete")
+async def delete_lead(request: Request):
     if not auth.is_admin(request.state.user): 
         raise HTTPException(403, "admin only")
-    data.delete_lead(project_name)
+    body = await request.json()
+    data.delete_lead(body.get("project_name", ""))
     return {"ok": True}
+# --------------------------------------------------
 
 @app.get("/network", response_class=HTMLResponse)
 async def network_page(request: Request):
     user = request.state.user
     network = data.network_visible_to(user)
     contacts = list(network.get("contacts", {}).values())
-    
-    for c in contacts:
-        acts = data.activities_for("network", c["id"])
-        c["_latest_activity"] = acts[0] if acts else None
 
     return TEMPLATES.TemplateResponse(request=request, name="network.html", context={
         "contacts": contacts, "total": len(contacts),
@@ -139,9 +153,21 @@ async def delete_network(contact_id: str, request: Request):
 async def log_activity(request: Request):
     body = await request.json()
     user = request.state.user
+    target_type = body["target_type"]
+    target_key = body["target_key"]
+    if not auth.is_admin(user):
+        uname = user["username"]
+        if target_type == "lead":
+            own = any(l["project_name"] == target_key for l in data.leads_visible_to(user))
+            if not own:
+                raise HTTPException(403, "Not your lead")
+        elif target_type == "network":
+            own = target_key in data.network_visible_to(user).get("contacts", {})
+            if not own:
+                raise HTTPException(403, "Not your contact")
     data.log_activity(
-        body["target_type"], body["target_key"], body["method"], body["outcome"], 
-        body.get("notes", ""), body.get("followup_date", ""), 
+        target_type, target_key, body["method"],
+        body.get("notes", ""), body.get("followup_date", ""),
         user.get("display_name") or user["username"]
     )
     return {"ok": True}
@@ -152,7 +178,42 @@ async def weekly_page(request: Request):
     stats = data.get_weekly_stats(user)
     return TEMPLATES.TemplateResponse(request=request, name="weekly.html", context={
         **stats, "current_user": user, "is_admin": auth.is_admin(user),
+        "users_list": auth.users_public_list(),
     })
+
+@app.post("/api/task")
+async def create_task(request: Request):
+    body = await request.json()
+    user = request.state.user
+    if not auth.is_admin(user):
+        body["assigned_to"] = user["username"]
+    task = data.create_task(body, user["username"])
+    return {"ok": True, "task": task}
+
+
+@app.put("/api/task/{task_id}")
+async def update_task(task_id: str, request: Request):
+    body = await request.json()
+    ok = data.update_task(task_id, body, request.state.user)
+    return {"ok": ok}
+
+
+@app.put("/api/task/{task_id}/assign")
+async def assign_task(task_id: str, request: Request):
+    if not auth.is_admin(request.state.user):
+        raise HTTPException(403, "admin only")
+    body = await request.json()
+    ok = data.assign_task(task_id, body.get("assigned_to", ""))
+    return {"ok": ok}
+
+
+@app.delete("/api/task/{task_id}")
+async def delete_task(task_id: str, request: Request):
+    if not auth.is_admin(request.state.user):
+        raise HTTPException(403, "admin only")
+    data.delete_task(task_id)
+    return {"ok": True}
+
 
 @app.post("/api/sync")
 async def handle_sync(request: Request):
@@ -164,8 +225,9 @@ async def handle_sync(request: Request):
         if "leads_csv" in payload and payload["leads_csv"]:
             data.LEADS_CSV.parent.mkdir(parents=True, exist_ok=True)
             data.LEADS_CSV.write_text(payload["leads_csv"], encoding="utf-8")
+        
         counts = data.sync_from_payload(payload)
-        return {"ok": True, "message": f"Synced: {counts['network']} network, {counts['activities']} activities"}
+        return {"ok": True, "message": f"Synced: {counts['users']} users, {counts['network']} network, {counts['activities']} activities"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
@@ -173,8 +235,6 @@ async def handle_sync(request: Request):
 async def pull_all(request: Request):
     if request.headers.get("X-Sync-Secret") != SYNC_SECRET: 
         raise HTTPException(403, "Invalid sync secret")
-    
-    # Uses the safe wrapper that handles both Local and MySQL modes
     return data.get_all_data_for_sync()
 
 def run(port: int = 8500):

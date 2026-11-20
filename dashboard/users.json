@@ -17,6 +17,12 @@
       "display_name": "Saad",
       "role": "member",
       "password_hash": "pbkdf2_sha256$100000$c71927ea1001af9a3e6feeece21d8c91$9f8011125be2896e110ac412f9b88086b7b80c28047b50f9a8738628b3313c3f"
+    },
+    "kaif": {
+      "username": "kaif",
+      "display_name": "Kaif",
+      "role": "member",
+      "password_hash": "pbkdf2_sha256$100000$61b6b04a9af37e977f70a819244d2bd0$ccf855c3968228b8bc95daf46f4c86b0f37b6c207c7110143a5a425edbe5cf33"
     }
   }
 }

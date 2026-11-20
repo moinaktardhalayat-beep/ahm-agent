@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "id": "task-57aa4ba9",
+      "title": "Contact 5 Netowrk",
+      "description": "Contact 5 nework , and add activity.",
+      "assigned_to": "kaif",
+      "created_by": "moin",
+      "status": "assigned",
+      "due_date": "2026-11-27",
+      "created_at": "2026-11-13T15:33:43",
+      "updated_at": "2026-11-13T15:33:43",
+      "completed_at": ""
+    },
+    {
+      "id": "task-1fdebc8b",
+      "title": "Contact Network",
+      "description": "Contact atleast 5 network, and update activity.",
+      "assigned_to": "saad",
+      "created_by": "moin",
+      "status": "assigned",
+      "due_date": "2026-11-17",
+      "created_at": "2026-11-13T15:32:39",
+      "updated_at": "2026-11-13T15:32:39",
+      "completed_at": ""
+    },
+    {
+      "id": "task-4944ca72",
+      "title": "Create Brouchure",
+      "description": "Create 2 brouchure with royal color match\n1. use finalized images only, \n2. one with shop image, other without it",
+      "assigned_to": "saad",
+      "created_by": "moin",
+      "status": "assigned",
+      "due_date": "2026-11-13",
+      "created_at": "2026-11-13T15:32:00",
+      "updated_at": "2026-11-13T15:32:00",
+      "completed_at": ""
+    }
+  ]
+}

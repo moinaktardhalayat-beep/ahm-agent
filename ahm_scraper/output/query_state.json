@@ -1,0 +1,496 @@
+{
+  "cities": {
+    "goa": {
+      "current_week": 1,
+      "week_started_at": "2026-11-12T20:14:28",
+      "queries": {
+        "top architects in Goa": {
+          "category": "A",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "top 10 architecture firms in Goa": {
+          "category": "A",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 3,
+          "last_yield": 3,
+          "retired": false,
+          "yield_history": [
+            3
+          ]
+        },
+        "hotel architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "hospitality architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "resort architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "top builders in Goa": {
+          "category": "A",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "top real estate developers in Goa": {
+          "category": "A",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "apartment developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "villa builders Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "resort developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "commercial building architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "villa architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 2,
+          "last_yield": 2,
+          "retired": false,
+          "yield_history": [
+            2
+          ]
+        },
+        "high rise architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "luxury residential architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "sustainable architects Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "hotel developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "commercial developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 7,
+          "last_yield": 7,
+          "retired": false,
+          "yield_history": [
+            7
+          ]
+        },
+        "hospitality developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "mixed use developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "township developers Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "green building consultants Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "facade design consultants Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "structural engineers Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "facade engineering firms Goa": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "IIA Goa chapter architects": {
+          "category": "E",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "construction companies Goa": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "CREDAI Goa member list": {
+          "category": "E",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "builders association Goa members": {
+          "category": "E",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 9,
+          "last_yield": 9,
+          "retired": false,
+          "yield_history": [
+            9
+          ]
+        },
+        "IGBC member directory Goa": {
+          "category": "E",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "builders Panaji Goa": {
+          "category": "D",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        }
+      }
+    },
+    "bengaluru": {
+      "current_week": 1,
+      "week_started_at": "2026-11-19T14:01:51",
+      "queries": {
+        "top architects in Bengaluru": {
+          "category": "A",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "top 10 architecture firms in Bengaluru": {
+          "category": "A",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 1,
+          "last_yield": 1,
+          "retired": false,
+          "yield_history": [
+            1
+          ]
+        },
+        "hotel architects Bengaluru": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "hospitality architects Bengaluru": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "resort architects Bengaluru": {
+          "category": "B",
+          "type": "architect",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "top builders in Bengaluru": {
+          "category": "A",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "top real estate developers in Bengaluru": {
+          "category": "A",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "apartment developers Bengaluru": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        },
+        "villa builders Bengaluru": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 9,
+          "last_yield": 9,
+          "retired": false,
+          "yield_history": [
+            9
+          ]
+        },
+        "resort developers Bengaluru": {
+          "category": "C",
+          "type": "builder",
+          "last_run_week": 1,
+          "times_run": 1,
+          "total_new_firms": 0,
+          "last_yield": 0,
+          "retired": false,
+          "yield_history": [
+            0
+          ]
+        }
+      }
+    }
+  }
+}

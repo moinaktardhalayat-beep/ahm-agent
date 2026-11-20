@@ -17,32 +17,73 @@
     header { background: #fff; border-bottom: 1px solid #e5e5e7; padding: 20px 32px; }
     h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 600; }
     .subtitle { color: #6e6e73; font-size: 13px; }
-    
-    main { padding: 24px 32px 60px 32px; max-width: 1200px; margin: 0 auto; }
-    
-    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-    @media (max-width: 1000px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    main { padding: 24px 32px 60px 32px; max-width: 1300px; margin: 0 auto; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
     .stat-box { background: #fff; border: 1px solid #e5e5e7; border-radius: 12px; padding: 20px; }
     .stat-box .num { font-size: 32px; font-weight: 600; color: #1d1d1f; line-height: 1; }
-    .stat-box .label { font-size: 12px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; font-weight: 600; }
+    .stat-box .label { font-size: 11px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; font-weight: 600; }
+    .stat-box .sub-stat { font-size: 12px; color: #6e6e73; margin-top: 6px; }
+    .stat-box .sub-stat strong { color: #1d1d1f; }
     .stat-box.highlight { border-color: #16a34a; background: #f0fdf4; }
     .stat-box.highlight .num { color: #16a34a; }
-    
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
     .panel { background: #fff; border: 1px solid #e5e5e7; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
     .panel h2 { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
     .panel h2 span { background: #f3f4f6; padding: 4px 10px; border-radius: 12px; font-size: 12px; }
-    
     .list-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .list-item:last-child { border-bottom: none; }
     .list-item .info strong { display: block; font-size: 14px; color: #1d1d1f; }
     .list-item .info small { display: block; font-size: 12px; color: #86868b; margin-top: 2px; }
     .list-item .badge { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: #e0e7ff; color: #3730a3; font-weight: 600; flex-shrink: 0; margin-left: 10px; }
-    
     .empty { color: #86868b; font-style: italic; font-size: 13px; padding: 16px 0; text-align: center; }
     .date-tag { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px; }
     .scroll-list { max-height: 400px; overflow-y: auto; padding-right: 8px; }
+    button { padding: 6px 14px; border: none; border-radius: 6px; background: #0071e3; color: #fff; font-size: 13px; cursor: pointer; font-weight: 500; font-family: inherit; }
+    button.secondary { background: #fff; color: #1d1d1f; border: 1px solid #d2d2d7; }
+    button.danger { background: #ffe5e5; color: #d70015; border: 1px solid #ffcccc; }
+
+    .user-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
+    @media (max-width: 900px) { .user-cards { grid-template-columns: repeat(2, 1fr); } }
+    .user-card { background: #f9f9fb; border: 1px solid #e5e5e7; border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.15s; }
+    .user-card:hover { background: #f0f4fa; border-color: #0071e3; }
+    .user-card.active { background: #eff6ff; border-color: #0071e3; box-shadow: 0 0 0 2px rgba(0,113,227,0.15); }
+    .user-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .user-card-header strong { font-size: 15px; color: #1d1d1f; }
+    .user-card-header .open-count { font-size: 11px; color: #0071e3; font-weight: 700; background: #dbeafe; padding: 2px 8px; border-radius: 10px; }
+    .user-card-stats { display: flex; flex-direction: column; gap: 3px; font-size: 11px; }
+    .user-card-stats .s-assigned { color: #92400e; }
+    .user-card-stats .s-progress { color: #0071e3; }
+    .user-card-stats .s-complete { color: #16a34a; }
+
+    .user-expanded { background: #f9f9fb; border-radius: 12px; padding: 20px; margin-top: 12px; border: 1px solid #e5e5e7; }
+    .user-expanded h3 { margin: 0 0 12px 0; font-size: 14px; color: #1d1d1f; }
+
+    .task-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .task-card { background: #fff; border-radius: 8px; padding: 14px; border-left: 3px solid #0071e3; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .task-card.status-complete { border-left-color: #16a34a; opacity: 0.7; }
+    .task-card.status-in_progress { border-left-color: #0071e3; }
+    .task-card.status-assigned { border-left-color: #f59e0b; }
+    .task-card .task-name { font-weight: 600; font-size: 14px; color: #1d1d1f; margin-bottom: 6px; }
+    .task-card .task-desc { font-size: 12px; color: #374151; margin: 0 0 8px 0; line-height: 1.45; white-space: pre-wrap; }
+    .task-card .task-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .meta-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 6px; background: #f3f4f6; color: #4b5563; line-height: 1.3; }
+    .meta-chip .ico { font-size: 10px; opacity: 0.75; }
+    .meta-chip.due-soon { background: #fef3c7; color: #92400e; }
+    .meta-chip.due-overdue { background: #fee2e2; color: #991b1b; font-weight: 600; }
+    .meta-chip.age { background: transparent; color: #9ca3af; padding: 3px 0; }
+    .meta-chip.muted { color: #9ca3af; }
+    .task-card .task-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .task-card select { padding: 4px 8px; font-size: 12px; border: 1px solid #d2d2d7; border-radius: 4px; font-family: inherit; }
+    .overdue { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+    .modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.4); }
+    .modal.open { display: flex; }
+    .modal-content { background: #fff; border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; }
+    .modal-content h2 { margin: 0 0 16px 0; font-size: 18px; }
+    .modal-content label { display: block; font-size: 12px; color: #6e6e73; margin: 10px 0 4px 0; font-weight: 500; }
+    .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 8px; border: 1px solid #d2d2d7; border-radius: 6px; font-family: inherit; font-size: 13px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -57,37 +98,35 @@
 
   <header>
     <h1>Weekly Sales Dashboard</h1>
-    <div class="subtitle">This Week: {{ this_week.start }} to {{ this_week.end }} | Last Week: {{ last_week.start }} to {{ last_week.end }}</div>
+    <div class="subtitle">This Week: {{ week_start }} to {{ week_end }}</div>
   </header>
 
   <main>
     <div class="stats-row">
       <div class="stat-box highlight">
-        <div class="num">{{ stats.meetings_this_week }}</div>
-        <div class="label">Meetings Booked (This Week)</div>
+        <div class="num">{{ meetings_this_week | default(0) }}</div>
+        <div class="label">Upcoming Meetings</div>
       </div>
       <div class="stat-box">
-        <div class="num">{{ stats.activities_this_week }}</div>
-        <div class="label">Activities Logged (This Week)</div>
+        <div class="num">{{ assigned_projects_count | default(0) }}</div>
+        <div class="label">Projects</div>
+        <div class="sub-stat"><strong>{{ acted_projects_count | default(0) }}</strong> acted on this week</div>
       </div>
       <div class="stat-box">
-        <div class="num">{{ stats.new_projects }}</div>
-        <div class="label">New Projects Added</div>
+        <div class="num">{{ assigned_network_count | default(0) }}</div>
+        <div class="label">Network</div>
+        <div class="sub-stat"><strong>{{ acted_network_count | default(0) }}</strong> acted on this week</div>
       </div>
       <div class="stat-box">
-        <div class="num">{{ stats.acted_projects }}</div>
-        <div class="label">Projects Acted On</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">{{ stats.acted_network }}</div>
-        <div class="label">Network Acted On</div>
+        <div class="num">{{ total_tasks_open | default(0) }}</div>
+        <div class="label">Tasks Assigned</div>
       </div>
     </div>
 
     <div class="grid-2">
       <div>
         <div class="panel">
-          <h2>📅 Meetings Arranged This Week <span>{{ meetings|length }}</span></h2>
+          <h2>📅 Meetings Arranged This Week <span>{{ meetings|length | default(0) }}</span></h2>
           {% if meetings %}
             {% for m in meetings %}
             <div class="list-item">
@@ -104,7 +143,7 @@
         </div>
 
         <div class="panel">
-          <h2>⏰ Follow-ups Due (To-Do List) <span>{{ (todo_leads|length) + (todo_network|length) }}</span></h2>
+          <h2>⏰ Follow-ups Due <span>{{ (todo_leads|length | default(0)) + (todo_network|length | default(0)) }}</span></h2>
           {% if todo_leads or todo_network %}
             {% for l in todo_leads %}
             <div class="list-item">
@@ -129,17 +168,16 @@
       </div>
 
       <div>
-        <!-- RECENT ACTIVITY (THIS WEEK) -->
         <div class="panel">
-          <h2>⚡ Recent Activity (This Week) <span>{{ this_week_acts|length }}</span></h2>
+          <h2>⚡ Recent Activity (This Week) <span>{{ this_week_acts|length | default(0) }}</span></h2>
           {% if this_week_acts %}
             <div class="scroll-list">
             {% for a in this_week_acts %}
             <div class="list-item">
               <div class="info">
                 <strong>{{ a.target_key }}</strong>
-                <small>{{ a.method|title }} → {{ a.outcome|replace('_',' ')|title }} · {{ a.date[:10] }} by {{ a.author }}</small>
-                {% if a.notes %}<small style="color:#374151; margin-top:4px;">"{{ a.notes[:80] }}"</small>{% endif %}
+                <small>{{ a.method|title }} · {{ a.updated_at[:10]|fmt_date }} by {{ a.updated_by }}</small>
+                {% if a.notes_history %}<small style="color:#374151; margin-top:4px; white-space:pre-wrap;">{{ a.notes_history[-1].text[:150] }}</small>{% endif %}
               </div>
             </div>
             {% endfor %}
@@ -148,27 +186,178 @@
             <div class="empty">Nothing logged yet this week</div>
           {% endif %}
         </div>
-
-        <!-- DONE LIST (LAST WEEK) -->
-        <div class="panel">
-          <h2>✅ Done List (Last Week) <span>{{ done_list|length }}</span></h2>
-          {% if done_list %}
-            <div class="scroll-list">
-            {% for a in done_list %}
-            <div class="list-item">
-              <div class="info">
-                <strong>{{ a.target_key }}</strong>
-                <small>{{ a.method|title }} → {{ a.outcome|replace('_',' ')|title }} · {{ a.date[:10] }} by {{ a.author }}</small>
-              </div>
-            </div>
-            {% endfor %}
-            </div>
-          {% else %}
-            <div class="empty">No activities logged last week</div>
-          {% endif %}
-        </div>
       </div>
     </div>
+
+    <!-- TASKS SECTION -->
+    {% if is_admin %}
+    <div class="panel">
+      <h2>📋 Tasks by Team Member <button onclick="openNewTaskModal()">+ New Task</button></h2>
+      {% if tasks_by_user %}
+      <div class="user-cards">
+        {% for username, info in tasks_by_user.items() %}
+        <div class="user-card" id="card-{{ username }}" onclick="toggleUser('{{ username }}')">
+          <div class="user-card-header">
+            <strong>{{ info.display_name }}</strong>
+            <span class="open-count">{{ info.assigned + info.in_progress }} open</span>
+          </div>
+          <div class="user-card-stats">
+            <span class="s-assigned">{{ info.assigned }} assigned</span>
+            <span class="s-progress">{{ info.in_progress }} in progress</span>
+            <span class="s-complete">{{ info.complete }} complete</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% for username, info in tasks_by_user.items() %}
+      <div class="user-expanded" id="expanded-{{ username }}" style="display:none;">
+        <h3>{{ info.display_name }}'s Tasks</h3>
+        {% if info.tasks %}
+        <div class="task-cards">
+          {% for t in info.tasks %}
+          <div class="task-card status-{{ t.status }}">
+            <div class="task-name">{{ t.title }}</div>
+                  {% if t.description %}<div class="task-desc">{{ t.description }}</div>{% endif %}
+            <div class="task-meta">
+              <span class="meta-chip"><span class="ico">📅</span>{{ t.created_at[:10] }}</span>
+              <span class="meta-chip"><span class="ico">✍</span>{{ t.created_by }}</span>
+              {% if t.due_date %}
+                <span class="meta-chip{% if t.overdue %} due-overdue{% elif t.days_to_due is not none and t.days_to_due <= 2 %} due-soon{% endif %}"><span class="ico">⏰</span>{{ t.due_date }}</span>
+              {% else %}
+                <span class="meta-chip muted"><span class="ico">⏰</span>No due date</span>
+              {% endif %}
+              <span class="meta-chip age">{{ t.age_days }}d old</span>
+            </div>
+            <div class="task-actions">
+              <select onchange="changeTaskStatus('{{ t.id }}', this.value)">
+                <option value="assigned" {% if t.status=='assigned' %}selected{% endif %}>Assigned</option>
+                <option value="in_progress" {% if t.status=='in_progress' %}selected{% endif %}>In Progress</option>
+                <option value="complete" {% if t.status=='complete' %}selected{% endif %}>Complete</option>
+              </select>
+              <select onchange="reassignTask('{{ t.id }}', this.value)">
+                {% for u in users_list %}
+                <option value="{{ u.username }}" {% if u.username==t.assigned_to %}selected{% endif %}>{{ u.display_name }}</option>
+                {% endfor %}
+              </select>
+              <button class="danger" onclick="deleteTask('{{ t.id }}')">Delete</button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">No tasks yet for {{ info.display_name }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="panel">
+      <h2>📋 My Tasks <button onclick="openNewTaskModal()">+ New Task</button></h2>
+      {% if tasks_own %}
+      <div class="task-cards">
+        {% for t in tasks_own %}
+        <div class="task-card status-{{ t.status }}">
+          <div class="task-name">{{ t.title }}</div>
+                  {% if t.description %}<div class="task-desc">{{ t.description }}</div>{% endif %}
+          <div class="task-meta">
+            <span class="meta-chip"><span class="ico">📅</span>{{ t.created_at[:10] }}</span>
+              <span class="meta-chip"><span class="ico">✍</span>{{ t.created_by }}</span>
+              {% if t.due_date %}
+                <span class="meta-chip{% if t.overdue %} due-overdue{% elif t.days_to_due is not none and t.days_to_due <= 2 %} due-soon{% endif %}"><span class="ico">⏰</span>{{ t.due_date }}</span>
+              {% else %}
+                <span class="meta-chip muted"><span class="ico">⏰</span>No due date</span>
+              {% endif %}
+              <span class="meta-chip age">{{ t.age_days }}d old</span>
+          </div>
+          <div class="task-actions">
+            <select onchange="changeTaskStatus('{{ t.id }}', this.value)">
+              <option value="assigned" {% if t.status=='assigned' %}selected{% endif %}>Assigned</option>
+              <option value="in_progress" {% if t.status=='in_progress' %}selected{% endif %}>In Progress</option>
+              <option value="complete" {% if t.status=='complete' %}selected{% endif %}>Complete</option>
+            </select>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty">No tasks yet. Click "+ New Task" to create one.</div>
+      {% endif %}
+    </div>
+    {% endif %}
   </main>
+
+  <div class="modal" id="new-task-modal">
+    <div class="modal-content">
+      <h2>New Task</h2>
+      <label>Title *</label>
+      <input type="text" id="task-title" required>
+      <label>Description</label>
+      <textarea id="task-desc" rows="2"></textarea>
+      <label>Due Date</label>
+      <input type="date" id="task-due">
+      {% if is_admin %}
+      <label>Assign To</label>
+      <select id="task-assign">
+        {% for u in users_list %}
+        <option value="{{ u.username }}" {% if u.username==current_user.username %}selected{% endif %}>{{ u.display_name }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeNewTaskModal()">Cancel</button>
+        <button onclick="submitNewTask()">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let openUser = null;
+    function toggleUser(username) {
+      const expanded = document.getElementById('expanded-' + username);
+      const card = document.getElementById('card-' + username);
+      if (openUser === username) {
+        expanded.style.display = 'none';
+        card.classList.remove('active');
+        openUser = null;
+        return;
+      }
+      if (openUser) {
+        document.getElementById('expanded-' + openUser).style.display = 'none';
+        document.getElementById('card-' + openUser).classList.remove('active');
+      }
+      expanded.style.display = 'block';
+      card.classList.add('active');
+      openUser = username;
+    }
+    function openNewTaskModal() { document.getElementById('new-task-modal').classList.add('open'); }
+    function closeNewTaskModal() { document.getElementById('new-task-modal').classList.remove('open'); }
+    async function submitNewTask() {
+      const body = {
+        title: document.getElementById('task-title').value,
+        description: document.getElementById('task-desc').value,
+        due_date: document.getElementById('task-due').value,
+      };
+      const assignEl = document.getElementById('task-assign');
+      if (assignEl) body.assigned_to = assignEl.value;
+      if (!body.title) return alert('Title required');
+      const r = await fetch('/api/task', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+      if (r.ok) location.reload(); else alert('Failed to create task');
+    }
+    async function changeTaskStatus(id, status) {
+      const r = await fetch('/api/task/' + id, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status})});
+      if (r.ok) location.reload(); else alert('Failed to update');
+    }
+    async function reassignTask(id, assigned_to) {
+      const r = await fetch('/api/task/' + id + '/assign', {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({assigned_to})});
+      if (r.ok) location.reload(); else alert('Failed to reassign');
+    }
+    async function deleteTask(id) {
+      if (!confirm('Delete this task?')) return;
+      const r = await fetch('/api/task/' + id, {method:'DELETE'});
+      if (r.ok) location.reload(); else alert('Failed to delete');
+    }
+  </script>
 </body>
 </html>

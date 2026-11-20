@@ -1,123 +1,119 @@
-"""Dynamic Multi-City Scraper Pipeline."""
-import argparse
-import csv
-import json
-import re
-import sys
+"""Dynamic multi-city scraper pipeline. Rule-based researcher."""
+import argparse, csv, json, sys
+from datetime import datetime
+from difflib import SequenceMatcher
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from models import ProjectRecord
-from extract import is_target_location
-from sources.web_search import search_firms, search_projects
-from sources.google_news import fetch_news
+from researcher import run as run_researcher
 
 OUT = HERE / "output" / "phase0_leads.csv"
-REJECTED_LOG = HERE / "output" / "phase0_rejected.csv"
+PROJECTS_JSON = HERE / "output" / "projects.json"
 NETWORK_FILE = HERE / "output" / "network.json"
 
-def _norm(s): return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
-def _safe(label, fn):
-    try:
-        result = fn()
-        print(f"[{label}] ok: {len(result)} raw rows")
-        return result
-    except Exception as e:
-        print(f"[{label}] FAILED: {type(e).__name__}: {e}")
-        return []
+def _is_dup(name: str, existing_names, thr: float = 0.85) -> bool:
+    nl = name.lower()
+    for e in existing_names:
+        if SequenceMatcher(None, nl, e.lower()).ratio() > thr:
+            return True
+    return False
 
-def _from_propcontext(city):
-    if city.lower() != "bengaluru": return [] # PropContext is Bengaluru specific
-    try:
-        from sources.propcontext_rera import search_bengaluru_projects
-        projects = list(search_bengaluru_projects())
-    except Exception:
-        return []
-    out = []
-    for p in projects:
-        name = (p.get("project_name") or p.get("name") or "").strip()
-        if not name: continue
-        out.append(ProjectRecord(project_name=name, location="Bengaluru", sector=p.get("project_type") or "Residential", owner_developer=p.get("promoter") or "", project_stage=p.get("status") or "", source_url="propcontext-mcp", confidence_label="Verified (RERA)"))
-    return out
 
-def _from_google_news(city):
-    out = []
-    for n in fetch_news(city=city):
-        out.append(ProjectRecord(
-            project_name=n.get("title", ""), 
-            location=city.title(), 
-            sector="News signal", 
-            project_stage="Announced (unverified)", 
-            stage_evidence_date=n.get("published", ""), 
-            facade_acp_scope_evidence=n.get("summary", ""), 
-            source_url=n.get("link", ""), 
-            confidence_label="Reported (news)"
-        ))
-    return out
+def _merge_to_json(new_projects: list, new_network: list, city: str):
+    now = datetime.now().isoformat(timespec="seconds")
 
-def _from_web_projects(city):
-    out = []
-    for p in search_projects(city):
-        out.append(ProjectRecord(
-            project_name=p["project_name"],
-            location=p["location"],
-            sector=p["sector"],
-            facade_acp_scope_evidence=p["facade_acp_scope_evidence"],
-            source_url=p["source_url"],
-            confidence_label=p["confidence_label"]
-        ))
-    return out
+    # ---- projects ----
+    existing_p = []
+    if PROJECTS_JSON.exists():
+        existing_p = json.loads(PROJECTS_JSON.read_text(encoding="utf-8"))
+    p_by_name = {p["project_name"]: p for p in existing_p}
 
-def _is_usable(r: ProjectRecord, city: str):
-    name = (r.project_name or "").strip()
-    if len(name) < 4: return False
-    if not is_target_location(f"{r.project_name} {r.location}", city): return False
-    if not r.source_url or not r.source_url.startswith("http"): return False
-    return True
+    added_p = 0
+    for res in new_projects:
+        if not isinstance(res, dict):
+            continue
+        pname = (res.get("project_name") or "").strip()
+        if not pname:
+            continue
+        if _is_dup(pname, p_by_name.keys()):
+            continue
+        p_by_name[pname] = {
+            **res,
+            "location": res.get("location", city),
+            "status": res.get("status", "RESEARCH_CANDIDATE"),
+            "assigned_to": res.get("assigned_to", ""),
+            "first_seen_at": now,
+            "updated_at": now,
+        }
+        added_p += 1
 
-def _dedup_key(r: ProjectRecord) -> str:
-    return f"{_norm(r.project_name[:80])}|{_norm(r.owner_developer[:40])}"
+    PROJECTS_JSON.write_text(
+        json.dumps(list(p_by_name.values()), indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    print(f"[projects] +{added_p} new, total {len(p_by_name)}")
+
+    # ---- network ----
+    existing_n = {"contacts": {}}
+    if NETWORK_FILE.exists():
+        existing_n = json.loads(NETWORK_FILE.read_text(encoding="utf-8"))
+    contacts = existing_n.setdefault("contacts", {})
+    existing_names = [c["name"] for c in contacts.values() if c.get("name")]
+
+    added_n = 0
+    for res in new_network:
+        if not isinstance(res, dict):
+            continue
+        name = (res.get("name") or "").strip()
+        if not name:
+            continue
+        if _is_dup(name, existing_names):
+            continue
+        cid = res.get("id") or f"net-{abs(hash(name)):x}"
+        contacts[cid] = res
+        existing_names.append(name)
+        added_n += 1
+
+    NETWORK_FILE.write_text(
+        json.dumps(existing_n, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    print(f"[network] +{added_n} new, total {len(contacts)}")
+
 
 def run(city: str):
-    print(f"\n--- Running Dynamic Pipeline for: {city.title()} ---")
-    
-    # 1. Fetch data dynamically
-    raw = []
-    raw.extend(_safe("propcontext_rera", lambda: _from_propcontext(city)))
-    raw.extend(_safe("google_news", lambda: _from_google_news(city)))
-    raw.extend(_safe("web_search_projects", lambda: _from_web_projects(city)))
+    print(f"\n--- Pipeline: {city.title()} ---")
+    result = run_researcher(city)
 
-    # 2. Filter
-    accepted = [r for r in raw if _is_usable(r, city)]
-
-    # 3. Upsert into CSV
-    existing_rows = []
     fieldnames = list(ProjectRecord.__annotations__)
-    seen_keys = {}
-    
+    existing_rows = []
     if OUT.exists():
         with OUT.open(encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for i, row in enumerate(reader):
-                existing_rows.append(row)
-                seen_keys[_norm(row['project_name'][:80])] = i
+            existing_rows = list(csv.DictReader(f))
 
-    new_count = 0
-    update_count = 0
-    for r in accepted:
-        key = _norm(r.project_name[:80])
-        if key in seen_keys:
-            # Upsert: Update the existing row
-            existing_rows[seen_keys[key]] = r.to_row()
-            update_count += 1
-        else:
-            # Insert new row
-            existing_rows.append(r.to_row())
-            seen_keys[key] = len(existing_rows) - 1
-            new_count += 1
+    for res in result.get("projects", []):
+        pr = ProjectRecord(
+            project_name=res["project_name"],
+            location=res.get("location", city),
+            sector=res.get("sector", ""),
+            owner_developer=res.get("owner_developer", ""),
+            operator_brand=res.get("operator_brand", ""),
+            architect_consultant=res.get("architect_consultant", ""),
+            main_contractor_pm=res.get("main_contractor_pm", ""),
+            project_stage=res.get("project_stage", ""),
+            total_project_value=res.get("total_project_value", ""),
+            facade_acp_scope_evidence=res.get("facade_acp_scope_evidence", ""),
+            package_award_status=res.get("package_award_status", "UNKNOWN"),
+            source_url=res.get("source_url", ""),
+            confidence_label=res.get("confidence_label", "Reported (news)"),
+        )
+        existing_rows = [r for r in existing_rows
+                         if r["project_name"] != pr.project_name]
+        existing_rows.append(pr.to_row())
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with OUT.open("w", newline="", encoding="utf-8") as f:
@@ -125,41 +121,11 @@ def run(city: str):
         w.writeheader()
         w.writerows(existing_rows)
 
-    print(f"\nNew leads added:  {new_count}")
-    print(f"Existing updated: {update_count}")
-    print(f"Total in CSV:     {len(existing_rows)}")
+    _merge_to_json(result.get("projects", []),
+                   result.get("network", []), city)
 
-    # 4. Upsert dynamic network contacts
-    print(f"\nSearching for developers/architects in {city.title()}...")
-    try:
-        new_dev_contacts = search_firms(city)
-        if new_dev_contacts:
-            if NETWORK_FILE.exists():
-                network_data = json.loads(NETWORK_FILE.read_text(encoding="utf-8"))
-            else:
-                network_data = {"contacts": {}}
-            
-            added = 0
-            updated = 0
-            for cid, contact in new_dev_contacts.items():
-                # Check if firm already exists by name
-                existing_id = next((k for k, v in network_data["contacts"].items() if v["name"] == contact["name"]), None)
-                if existing_id:
-                    network_data["contacts"][existing_id]["email"] = contact["email"]
-                    network_data["contacts"][existing_id]["phone"] = contact["phone"]
-                    updated += 1
-                else:
-                    network_data["contacts"][cid] = contact
-                    added += 1
-            
-            NETWORK_FILE.write_text(json.dumps(network_data, indent=2), encoding="utf-8")
-            print(f"[network] Added {added} new contacts, Updated {updated} existing contacts.")
-    except Exception as e:
-        print(f"[network] FAILED to scrape developers: {e}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="AHM Scraper Pipeline")
-    parser.add_argument("--city", default="Bengaluru", help="Target city/state (e.g. Bengaluru, Goa)")
-    args = parser.parse_args()
-    
-    run(args.city)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--city", default="Bengaluru")
+    run(parser.parse_args().city)
