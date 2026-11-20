@@ -44,6 +44,30 @@
     
     .card-activity { background: #f9f9fb; border-radius: 6px; padding: 10px; font-size: 12px; margin-bottom: 16px; border-left: 3px solid #0071e3; }
     .card-activity strong { color: #1d1d1f; display: block; margin-bottom: 2px; }
+    .card-activity .activity-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+    .card-activity .activity-head strong { color: #1d1d1f; font-size: 13px; }
+    .card-activity .activity-meta { font-size: 11px; color: #6e6e73; }
+    .card-activity .notes-list { margin: 8px 0; }
+    .card-activity .note-entry { padding: 8px 10px; background: #fff; border-radius: 5px; margin-bottom: 6px; border-left: 2px solid #d2d2d7; }
+    .card-activity .note-meta { font-size: 10px; color: #86868b; font-weight: 600; letter-spacing: 0.3px; }
+    .card-activity .note-text { font-size: 12px; color: #1d1d1f; margin-top: 3px; white-space: pre-wrap; word-break: break-word; }
+    .card-activity .notes-toggle { display: inline-block; font-size: 11px; color: #0071e3; text-decoration: none; margin-top: 4px; cursor: pointer; }
+    .card-activity .notes-toggle:hover { text-decoration: underline; }
+    .followup-tag { display: inline-block; margin-top: 8px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #f3f4f6; color: #4b5563; }
+    .followup-tag.overdue { background: #fee2e2; color: #991b1b; }
+    .followup-tag.today { background: #f59e0b; color: #fff; }
+    .followup-tag.soon { background: #fef3c7; color: #92400e; }
+    .followup-tag.this-week { background: #dbeafe; color: #1e40af; }
+    .followup-tag.later { background: #dcfce7; color: #166534; }
+
+    .card-activity .activity-notes { margin-top: 6px; font-size: 12px; color: #374151; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+    .followup-tag { display: inline-block; margin-top: 8px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #f3f4f6; color: #4b5563; }
+    .followup-tag.overdue { background: #fee2e2; color: #991b1b; }
+    .followup-tag.today { background: #f59e0b; color: #fff; }
+    .followup-tag.soon { background: #fef3c7; color: #92400e; }
+    .followup-tag.this-week { background: #dbeafe; color: #1e40af; }
+    .followup-tag.later { background: #dcfce7; color: #166534; }
+
     
     .card-actions { display: flex; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
     .card-actions button { flex: 1; padding: 6px; font-size: 12px; }
@@ -69,7 +93,23 @@
       main { padding: 16px; }
       .grid-container { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    .card-activity .activity-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+    .card-activity .activity-head strong { color: #1d1d1f; font-size: 13px; }
+    .card-activity .activity-meta { font-size: 11px; color: #6e6e73; }
+    .card-activity .note-latest { margin: 6px 0 10px 0; }
+    .card-activity .note-latest .note-text { font-size: 12px; color: #1d1d1f; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+    .card-activity .activity-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .card-activity .notes-toggle { font-size: 11px; color: #0071e3; text-decoration: none; cursor: pointer; background: none; border: none; padding: 0; }
+    .card-activity .notes-toggle:hover { text-decoration: underline; }
+    .followup-chip { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #f3f4f6; color: #4b5563; white-space: nowrap; }
+    .followup-chip.overdue { background: #fee2e2; color: #991b1b; }
+    .followup-chip.today { background: #f59e0b; color: #fff; }
+    .followup-chip.soon { background: #fef3c7; color: #92400e; }
+    .followup-chip.this-week { background: #dbeafe; color: #1e40af; }
+    .followup-chip.later { background: #dcfce7; color: #166534; }
+
+</style>
 </head>
 <body>
   <nav class="topnav">
@@ -111,7 +151,10 @@
   <main>
     <div class="grid-container" id="card-grid">
       {% for c in contacts %}
-      <div class="card" data-key="{{ c.id }}" data-index="{{ loop.index0 }}" data-status="{{ c.status }}" data-assignee="{{ c.assigned_to or 'Unassigned' }}" data-location="{{ c.location or 'Unknown' }}">
+      <div class="card" data-key="{{ c.id }}" data-index="{{ loop.index0 }}" data-status="{{ c.status }}" data-assignee="{{ c.assigned_to or 'Unassigned' }}" data-location="{{ c.location or 'Unknown' }}"
+           data-activity-method="{{ c._latest_activity.method if c._latest_activity else '' }}"
+           data-activity-followup="{{ c._followup_date or '' }}"
+           data-has-activity="{{ '1' if c._latest_activity else '0' }}">
         <!-- VIEW MODE -->
         <div id="view-{{ loop.index0 }}" class="view-mode">
           <div class="card-header">
@@ -121,6 +164,9 @@
           
           <div class="card-details">
             <div>Type <span class="badge type">{{ c.type|replace('_',' ')|title }}</span></div>
+            {% if c.website %}
+            <div>Website <a href="{{ c.website }}" target="_blank" style="color:#0071e3; font-weight:600; text-decoration:none;">🔗 Visit Website</a></div>
+            {% endif %}
             <div>Location <span style="font-weight:600; color:#1d1d1f;">{{ c.location or 'Unknown' }}</span></div>
             <div>Firm <span>{{ c.firm or 'N/A' }}</span></div>
             <div>Phone <span>{{ c.phone or 'None' }}</span></div>
@@ -129,15 +175,31 @@
           </div>
 
           {% if c._latest_activity %}
-          <div class="card-activity">
-            <strong>{{ c._latest_activity.method|title }} - {{ c._latest_activity.outcome|replace('_',' ')|title }}</strong>
-            {{ c._latest_activity.date[:10] }} {% if c._latest_activity.author %}by {{ c._latest_activity.author }}{% endif %}
+          {% set act = c._latest_activity %}
+          <div class="card-activity" data-notes-json='{{ act.notes_history|tojson }}'>
+            <div class="activity-head">
+              <strong>{{ act.method|title }}</strong>
+              {% if c._followup_date %}<span class="followup-chip{% if c._followup_days is not none and c._followup_days < 0 %} overdue{% elif c._followup_days is not none and c._followup_days == 0 %} today{% elif c._followup_days is not none and c._followup_days <= 2 %} soon{% elif c._followup_days is not none and c._followup_days <= 7 %} this-week{% else %} later{% endif %}">FollowUp | {{ c._followup_date|fmt_date }}{% if c._followup_days is not none %} ({{ c._followup_days }}d){% endif %}</span>{% endif %}
+            </div>
+            {% if act.notes_history %}
+            <div class="note-latest">
+              <div class="note-text">{{ act.notes_history[-1].text }}</div>
+            </div>
+            <div class="activity-footer">
+              <a href="#" class="notes-toggle" onclick="openNotesModal(event); return false;">View all ({{ act.notes_history|length }})</a>
+              <span class="activity-meta">LastUpd: {{ act.updated_at[:10]|fmt_date }} by {{ act.updated_by }}</span>
+            </div>
+            {% else %}
+            <div class="activity-footer">
+              <span class="activity-meta">LastUpd: {{ act.updated_at[:10]|fmt_date }} by {{ act.updated_by }}</span>
+            </div>
+            {% endif %}
           </div>
           {% else %}
-          <div class="card-activity" style="border-left-color:#d2d2d7; color:#86868b;">No recent activity</div>
+          <div class="card-activity" style="border-left-color:#d2d2d7; color:#86868b;">No activity yet</div>
           {% endif %}
 
-          <div class="card-actions">
+<div class="card-actions">
             <button class="secondary" onclick="toggleEdit('{{ loop.index0 }}')">Edit</button>
             <button onclick="openActivityModal('{{ c.id }}')">Log Activity</button>
           </div>
@@ -165,6 +227,9 @@
           
           <label>Email</label>
           <input class="edit-input" id="edit-email-{{ loop.index0 }}" value="{{ c.email }}">
+          
+          <label>Website URL</label>
+          <input class="edit-input" id="edit-website-{{ loop.index0 }}" value="{{ c.website }}" placeholder="https://...">
           
           <label>Status</label>
           <select class="edit-input" id="edit-status-{{ loop.index0 }}">
@@ -211,6 +276,8 @@
       <input type="text" id="add-phone">
       <label>Email</label>
       <input type="text" id="add-email">
+      <label>Website URL</label>
+      <input type="text" id="add-website" placeholder="https://...">
       <label>How they help</label>
       <textarea id="add-help" rows="2"></textarea>
       <div class="modal-actions">
@@ -227,19 +294,16 @@
       <input type="hidden" id="act-target">
       <label>Method</label>
       <select id="act-method">
-        {% for m in activity_methods %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
-      </select>
-      <label>Outcome</label>
-      <select id="act-outcome">
-        {% for o in activity_outcomes %}<option value="{{ o }}">{{ o.replace('_',' ') }}</option>{% endfor %}
+        {% for m in activity_methods %}<option value="{{ m }}">{{ m|title }}</option>{% endfor %}
       </select>
       <label>Notes</label>
-      <textarea id="act-notes" rows="3"></textarea>
+      <textarea id="act-notes" rows="3" placeholder="Add a new note"></textarea>
+      <small id="act-notes-hint" style="display:none; color:#6e6e73; margin-top:4px;">Previous notes are preserved. This new note will be appended.</small>
       <label>Follow-up Date</label>
       <input type="date" id="act-followup">
       <div class="modal-actions">
         <button class="secondary" onclick="closeActivityModal()">Cancel</button>
-        <button onclick="submitActivity()">Log Activity</button>
+        <button onclick="submitActivity()">Save</button>
       </div>
     </div>
   </div>
@@ -251,14 +315,33 @@
     let currentPage = 1;
     let totalPages = 1;
 
+    function restoreFilters() {
+      const savedField = sessionStorage.getItem('netFilterField');
+      const savedValue = sessionStorage.getItem('netFilterValue');
+      const savedSort = sessionStorage.getItem('netSortBy');
+      
+      if (savedSort) document.getElementById('sort-by').value = savedSort;
+      
+      if (savedField) {
+        document.getElementById('filter-field').value = savedField;
+        updateFilterValues();
+        if (savedValue) document.getElementById('filter-value').value = savedValue;
+      }
+      applyFiltersAndSort();
+    }
+
+    function saveFilters(field, value, sort) {
+      sessionStorage.setItem('netFilterField', field);
+      sessionStorage.setItem('netFilterValue', value);
+      sessionStorage.setItem('netSortBy', sort);
+    }
+
     function renderPage(page) {
       currentPage = page;
       totalPages = Math.ceil(filteredCards.length / perPage);
       
-      // Hide all cards first
       allCards.forEach(c => c.style.display = 'none');
       
-      // Show only the cards for the current page
       const start = (page - 1) * perPage;
       const end = start + perPage;
       filteredCards.slice(start, end).forEach(c => c.style.display = 'flex');
@@ -306,14 +389,14 @@
       const filterVal = document.getElementById('filter-value').value;
       const sortBy = document.getElementById('sort-by').value;
       
-      // 1. Filter
+      saveFilters(field, filterVal, sortBy);
+      
       if (field && filterVal) {
         filteredCards = allCards.filter(card => card.dataset[field] === filterVal);
       } else {
         filteredCards = [...allCards];
       }
       
-      // 2. Sort
       if (sortBy === 'status') {
         filteredCards.sort((a, b) => a.dataset.status.localeCompare(b.dataset.status));
       } else if (sortBy === 'assignee') {
@@ -324,12 +407,10 @@
         filteredCards.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
       }
       
-      // 3. Reorder DOM
       const grid = document.getElementById('card-grid');
       grid.innerHTML = '';
       filteredCards.forEach(c => grid.appendChild(c));
       
-      // 4. Render Page 1 of the new list
       renderPage(1);
     }
 
@@ -338,11 +419,11 @@
       document.getElementById('filter-value').style.display = 'none';
       document.getElementById('filter-value').innerHTML = '';
       document.getElementById('sort-by').value = 'default';
+      sessionStorage.clear();
       applyFiltersAndSort();
     }
 
-    // Initialize
-    applyFiltersAndSort();
+    restoreFilters();
 
     function toggleEdit(idx) {
       const view = document.getElementById('view-' + idx);
@@ -363,6 +444,7 @@
         type: document.getElementById('edit-type-' + idx).value,
         phone: document.getElementById('edit-phone-' + idx).value,
         email: document.getElementById('edit-email-' + idx).value,
+        website: document.getElementById('edit-website-' + idx).value,
         status: document.getElementById('edit-status-' + idx).value,
       };
       const assignEl = document.getElementById('edit-assign-' + idx);
@@ -383,10 +465,38 @@
       else alert('Failed to delete');
     }
 
-    // ACTIVITY MODAL
-    function openActivityModal(key) {
-      document.getElementById('act-target').value = key;
+    function openActivityModal(idx) {
+      const card = document.querySelector(`.card[data-key="${key}"]`);
+      document.getElementById('act-target').value = card.dataset.key;
+      document.getElementById('act-method').value = card.dataset.activityMethod || 'call';
+      document.getElementById('act-followup').value = card.dataset.activityFollowup || '';
+      document.getElementById('act-notes').value = '';
+      document.getElementById('act-notes-hint').style.display =
+        card.dataset.hasActivity === '1' ? 'block' : 'none';
       document.getElementById('activity-modal').classList.add('open');
+    }
+    function openNotesModal(event) {
+      event.preventDefault();
+      const cardActivity = event.target.closest('.card-activity');
+      if (!cardActivity) return;
+      let notes = [];
+      try { notes = JSON.parse(cardActivity.dataset.notesJson || '[]'); } catch (e) { notes = []; }
+      const body = document.getElementById('notes-modal-body');
+      if (!notes.length) {
+        body.innerHTML = '<div class="empty" style="text-align:center;color:#86868b;padding:20px;">No notes</div>';
+      } else {
+        body.innerHTML = notes.map(n => {
+          const ts = (n.ts || '').slice(0, 10);
+          return '<div class="note-entry"><span class="note-meta">[' + escHtml(ts) + ' — ' + escHtml(n.by || '') + ']</span><div class="note-text">' + escHtml(n.text || '') + '</div></div>';
+        }).join('');
+      }
+      document.getElementById('notes-modal').classList.add('open');
+    }
+    function closeNotesModal() {
+      document.getElementById('notes-modal').classList.remove('open');
+    }
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
     function closeActivityModal() {
       document.getElementById('activity-modal').classList.remove('open');
@@ -396,7 +506,6 @@
       const body = {
         target_type: 'network', target_key: key,
         method: document.getElementById('act-method').value,
-        outcome: document.getElementById('act-outcome').value,
         notes: document.getElementById('act-notes').value,
         followup_date: document.getElementById('act-followup').value
       };
@@ -405,7 +514,6 @@
       else alert('Failed to log activity');
     }
 
-    // ADD CONTACT MODAL
     function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
     function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
     async function submitNewContact() {
@@ -416,6 +524,7 @@
         type: document.getElementById('add-type').value,
         phone: document.getElementById('add-phone').value,
         email: document.getElementById('add-email').value,
+        website: document.getElementById('add-website').value,
         how_they_help: document.getElementById('add-help').value,
       };
       if (!body.name) return alert('Name required');
@@ -429,5 +538,16 @@
       }
     }
   </script>
+  <!-- NOTES HISTORY MODAL -->
+  <div class="modal" id="notes-modal">
+    <div class="modal-content" style="max-width:560px;">
+      <h2>Activity History</h2>
+      <div id="notes-modal-body" style="max-height:60vh; overflow-y:auto; background:#f9f9fb; padding:12px; border-radius:6px;"></div>
+      <div class="modal-actions">
+        <button onclick="closeNotesModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
